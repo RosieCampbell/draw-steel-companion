@@ -392,6 +392,9 @@
         : "");
     $("#kitSelect").value = state.kit2;
     $("#kitSelect").disabled = state.inCombat;
+    $("#kitHelp").textContent = state.inCombat
+      ? "Locked during combat. End the encounter in Play; change kits only after a respite."
+      : "Available after a respite. Ending combat alone does not count as a respite.";
     if (document.activeElement !== $("#notes")) $("#notes").value = g.notes;
     $("#adjustments").innerHTML = ["focus", "surge", "rec", "vict", "tok"]
       .map(
