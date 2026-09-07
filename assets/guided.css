@@ -1114,3 +1114,11 @@ dialog .meta {
 .campaign-row button,#campaignLists>section>button {padding:9px;border:1px solid var(--line,#ccc);border-radius:6px;background:transparent;color:inherit}
 #campaignLists section {padding:14px 0;border-bottom:1px solid var(--line,#ccc)}
 @media(max-width:600px){.resource-pair{grid-template-columns:1fr 1fr}.inline-counter{gap:2px}.inline-counter button{min-width:30px}.library-rule summary{flex-wrap:wrap;gap:2px}.health-number .editable-stat{font-size:2.5rem}}
+
+/* Each resource gets the full rail width, including on compact screens. */
+.hero-rail, .resource-pair, .resource-pair > div { min-width: 0; }
+.resource-pair { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.resource-pair > div + div { border-left: 0; padding-left: 0; }
+.inline-counter { display: grid; grid-template-columns: 36px minmax(0, 1fr) 36px; gap: 6px; width: 100%; }
+.inline-counter button { min-width: 0; width: 36px; padding: 0; min-height: 40px; }
+.inline-counter .editable-stat { width: 100%; min-width: 0; height: 44px; }

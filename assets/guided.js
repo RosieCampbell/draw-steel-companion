@@ -486,7 +486,7 @@
       a.range +
       "</p>" +
       detail(a.blurb) +
-      '<details class="rule-detail"><summary>How it works</summary>' +
+      '<details class="rule-detail" open><summary>How it works</summary>' +
       detail(a.detail) +
       "</details>";
     html = '<p class="origin">'+D.origin(id,state).label+'</p>'+html+window.GuidedLearning.mathBlock(state,id);
