@@ -1122,3 +1122,13 @@ dialog .meta {
 .inline-counter { display: grid; grid-template-columns: 36px minmax(0, 1fr) 36px; gap: 6px; width: 100%; }
 .inline-counter button { min-width: 0; width: 36px; padding: 0; min-height: 40px; }
 .inline-counter .editable-stat { width: 100%; min-width: 0; height: 44px; }
+
+.campaign-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 16px; padding: 18px; border: 1px solid var(--line); border-radius: 10px; }
+.campaign-row .field-n, .campaign-row .field-d, .campaign-actions { grid-column: 1 / -1; }
+.campaign-row label { margin: 0; font-size: 13px; }
+.campaign-row input, .campaign-row textarea { margin: 6px 0 0; font-weight: 400; font-size: 15px; }
+.campaign-row textarea { display: block; width: 100%; min-height: 100px; resize: vertical; line-height: 1.5; }
+.campaign-actions { display: flex; flex-wrap: wrap; gap: 10px; padding-top: 2px; }
+.campaign-actions button { margin: 0; min-height: 40px; font-size: 13px; }
+.campaign-actions [data-operation="save"] { background: var(--blue); color: white; border-color: var(--blue); }
+@media (max-width: 480px) { .campaign-row { padding: 12px; } }

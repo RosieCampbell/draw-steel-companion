@@ -424,9 +424,28 @@
   function renderCampaign() {
     const names={wealth:'Wealth',renown:'Renown',xp:'Experience'};
     $('#campaignFields').innerHTML=Object.entries(names).map(([key,label])=>'<label>'+label+'<input type="number" min="0" step="1" data-set="'+key+'" value="'+state[key]+'"></label>').join('');
-    const schemas={projects:{n:'Project',p:'Progress',g:'Goal'},items:{n:'Consumable',c:'Quantity'},gear:{n:'Equipment',d:'Notes'}};
-    $('#campaignLists').innerHTML=Object.entries(schemas).map(([key,fields])=>'<section><h3>'+({projects:'Projects',items:'Consumables',gear:'Equipment'}[key])+'</h3>'+state[key].map((row,index)=>'<div class="campaign-row" data-list-row="'+key+'" data-index="'+index+'">'+Object.entries(fields).map(([f,label])=>'<label>'+label+'<input data-field="'+f+'" type="'+(typeof row[f]==='number'?'number':'text')+'" value="'+escapeText(String(row[f])).replaceAll('"','&quot;')+'"></label>').join('')+'<button data-list="'+key+'" data-operation="save">Save</button><button data-list="'+key+'" data-operation="remove">Remove</button></div>').join('')+'<button data-list="'+key+'" data-operation="add">Add '+({projects:'project',items:'consumable',gear:'equipment'}[key])+'</button></section>').join('');
+    const schemas = {
+      projects: {n: 'Project name', p: 'Progress', g: 'Goal'},
+      items: {n: 'Consumable name', c: 'Quantity'},
+      gear: {n: 'Equipment name', d: 'Notes'}
+    };
+    const titles = {projects: 'Projects', items: 'Consumables', gear: 'Equipment'};
+    const singular = {projects: 'project', items: 'consumable', gear: 'equipment'};
+    $('#campaignLists').innerHTML = Object.entries(schemas).map(([key, fields]) =>
+      '<section><h3>' + titles[key] + '</h3>' + state[key].map((row, index) =>
+        '<div class="campaign-row" data-list-row="' + key + '" data-index="' + index + '">' +
+        Object.entries(fields).map(([field, label]) => {
+          const value = escapeText(String(row[field]));
+          const control = field === 'd'
+            ? '<textarea data-field="d" rows="3">' + value + '</textarea>'
+            : '<input data-field="' + field + '" type="' + (typeof row[field] === 'number' ? 'number' : 'text') + '" value="' + value.replaceAll('"', '&quot;') + '">';
+          return '<label class="campaign-field field-' + field + '">' + label + control + '</label>';
+        }).join('') +
+        '<div class="campaign-actions"><button data-list="' + key + '" data-operation="save">Save changes</button><button data-list="' + key + '" data-operation="remove">Remove</button></div></div>'
+      ).join('') + '<button data-list="' + key + '" data-operation="add">Add ' + singular[key] + '</button></section>'
+    ).join('');
   }
+
   function renderLesson() {
     const i = state.guide.lesson,
       lesson = LESSONS[i];
