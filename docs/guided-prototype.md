@@ -34,3 +34,6 @@ My Hero includes kit selection after a respite, notes, manual resource adjustmen
 40 automated tests cover the original companion and prototype. The guided tests include a full round, action costs, pure roll previews, natural 19–20, surge limits, Dazed, extra actions, action trade-down, dying recovery, legacy data, practice isolation, live-mode confirmation, conflict detection, learning feedback and labels/links. Existing tracker tests continue passing.
 
 The browser-control connection reports no available browser despite the ambient open-tab context. Actual visual, touch, and screen-reader checks remain outstanding. The preview is ready for the user to try; no claim of completed visual QA is made.
+
+## Reference-only Learn revision
+Learn now opens directly to a searchable, scope-filtered rules reference. Training scenarios, dice exercises, flashcards and quizzes have been removed from the guided interface. Entries use rulebook terminology, identify the source book and label condensed wording; character-specific explanations remain separate. General maneuvers and Charge have individual entries. Legacy learning metadata is preserved for compatibility. The current suite has 39 tests, including reference search and filtering.

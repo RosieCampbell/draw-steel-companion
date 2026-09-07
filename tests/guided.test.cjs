@@ -263,15 +263,6 @@ test("conflicting live updates are loaded without overwriting another tracker", 
   assert.equal(p.state(LIVE).inCombat, false);
   assert.match(p.q("#notice").textContent, /changed in another tracker/);
 });
-test("lessons give feedback and advance, without starting combat", async (t) => {
-  const p = await page(t);
-  p.click('.primary [data-view="learn"]');
-  p.click('[data-answer="1"]');
-  assert.match(p.q("#lessonFeedback").textContent, /Not quite/);
-  p.click("#nextLesson");
-  assert.equal(p.state().guide.lesson, 1);
-  assert.equal(p.state().inCombat, false);
-});
 test("all labels target controls and all linked local pages exist", async (t) => {
   const p = await page(t),
     ids = [...p.d.querySelectorAll("[id]")].map((e) => e.id);
@@ -294,16 +285,6 @@ test('damage breakdown matches actual unmodified ability damage for both kits an
  const s=start();s.kit2=kit;const b=D.breakdown(s,id,ranged);for(const [i,dice] of [[0,[1,1]],[1,[6,6]],[2,[10,10]]]){const r=D.rollResult(s,id,{...options,d1:dice[0],d2:dice[1],markEffect:false,ranged});assert.equal(r.damage,b.base[i]+b.stat[i]+b.kit[i]+b.treasure[i],kit+' '+id+' '+i);}
  }
 });
-test('learning search separates general and personal rules; practice and flashcards leave the hero untouched',async t=>{
- const p=await page(t);p.click('#start');const before=p.w.localStorage.getItem(PRACTICE);p.click('[data-view="learn"]');p.click('[data-learn="rules"]');
- p.q('#learnScope').value='everyone';p.q('#learnScope').dispatchEvent(new p.w.Event('change'));assert.match(p.q('#ruleLibrary').textContent,/Catch Breath/);assert.equal(p.q('#rule-ability-patient'),null);
- p.click('[data-learn="rolls"]');p.click('#practiceResolve');assert.match(p.q('#practiceResult').textContent,/Failure/);
- p.q('#practiceKind').value='patient';p.q('#practiceKind').dispatchEvent(new p.w.Event('change'));assert.equal(p.q('#practiceKind').value,'patient',p.q('#practiceKind').outerHTML);p.click('#practiceResolve');assert.match(p.q('#practiceResult').textContent,/5 damage/);assert.doesNotMatch(p.q('#practiceResult').textContent,/undefined/);
- p.click('[data-learn="cards"]');p.click('#flipCard');p.click('#knowCard');assert.ok(p.w.localStorage.getItem('ds-guided-study-v1'));assert.equal(p.w.localStorage.getItem(PRACTICE),before);
-});
-test('quiz cannot award the same answer twice after switching tabs',async t=>{
- const p=await page(t);p.click('[data-view="learn"]');p.click('[data-learn="quiz"]');p.click('[data-quiz-answer="1"]');p.click('[data-learn="rules"]');p.click('[data-learn="quiz"]');p.click('[data-quiz-answer="1"]');p.click('#nextQuiz');assert.match(p.q('#knowledgeQuiz').textContent,/1 correct/);
-});
 test('campaign list editing saves literal text, persists, and undo restores removed entries',async t=>{
  const p=await page(t);p.click('[data-view="hero"]');p.click('[data-list="projects"][data-operation="add"]');const row=p.q('[data-list-row="projects"]');row.querySelector('[data-field="n"]').value='<b>Map</b>';row.querySelector('[data-field="p"]').value='3';row.querySelector('[data-field="g"]').value='10';p.click('[data-list="projects"][data-operation="save"]');assert.equal(p.state(PRACTICE).projects[0].n,'<b>Map</b>');p.click('[data-list="projects"][data-operation="remove"]');assert.equal(p.state(PRACTICE).projects.length,0);p.click('#undo');assert.equal(p.state(PRACTICE).projects[0].p,3);
 });
@@ -322,4 +303,19 @@ test('saved equipment displays as text; Edit opens a form and Cancel discards ch
   p.click('[data-list="gear"][data-operation="save"]');
   assert.equal(p.q('[data-list-row="gear"] textarea'), null);
   assert.equal(p.state(PRACTICE).gear[0].d, 'Updated\nnotes');
+});
+
+test('Learn is a searchable reference with separate character notes and no training controls', async t => {
+ const p=await page(t);p.click('[data-view="learn"]');
+ assert.equal(p.q('[data-learn="quiz"]'),null);
+ assert.equal(p.q('#lessonCard'),null);
+ const search=p.q('#learnSearch'); search.value='Charge';search.dispatchEvent(new p.w.Event('input'));
+ assert.match(p.q('#ruleLibrary').textContent,/straight line/);
+ assert.match(p.q('#ruleLibrary').textContent,/Starter Rules/);
+ search.value=''; search.dispatchEvent(new p.w.Event('input'));
+ p.q('#learnScope').value='hero';p.q('#learnScope').dispatchEvent(new p.w.Event('change'));
+ assert.equal(p.q('#rule-charge'),null);
+ assert.ok(p.q('#rule-ability-patient'));
+ search.value='zzzzzz';search.dispatchEvent(new p.w.Event('input'));
+ assert.match(p.q('#ruleLibrary').textContent,/No matching rules/);
 });

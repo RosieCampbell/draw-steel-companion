@@ -143,54 +143,6 @@
       "A Recovery is a limited healing resource, not an amount of extra Stamina. Spend one to regain a third of maximum Stamina, rounded down. Catch Breath costs a maneuver in combat and cannot be used while dying; outside combat, you can spend Recoveries even while dying.",
     turn: "Your turn is your opportunity to take a main action, maneuver and move action. A round contains everyone’s turns. Beginning your turn grants Focus; beginning a new round refreshes round-limited benefits. Those are different moments.",
   };
-  const LESSONS = [
-    {
-      title: "Start with a plan.",
-      text: "A dangerous enemy is 8 squares away. Before attacking, how could Aravinthaya help the whole party?",
-      options: ["Mark that enemy", "Spend all my Focus"],
-      correct: 0,
-      explain:
-        "Mark uses your maneuver. It gives you and eligible allies an edge against the target, and powers your Focus benefits.",
-    },
-    {
-      title: "Take the shot.",
-      text: "You marked the enemy, have a good firing position, and have not used your move action. What suits that position?",
-      options: [
-        "Patient Shot, giving up movement for +2 damage",
-        "Move just because a move action is available",
-      ],
-      correct: 0,
-      explain:
-        "You do not have to use every action. Patient Shot gains +2 damage when you do not use your move action that turn.",
-    },
-    {
-      title: "Read the dice.",
-      text: "Your dice show 5 and 4. Add Might 2 and a single edge from Mark: 13. Which result is that?",
-      options: ["Tier 1", "Tier 2", "Tier 3"],
-      correct: 1,
-      explain:
-        "11 or less is tier 1; 12–16 is tier 2; 17+ is tier 3. Read the damage for that tier. The damage already includes your characteristic.",
-    },
-    {
-      title: "Track your Mark triggers.",
-      text: "Your Patient Shot already damaged the Mark this round. An ally now damages it too. What happens?",
-      options: [
-        "Gain another Focus automatically",
-        "You may spend 1 Focus for a Mark benefit",
-      ],
-      correct: 1,
-      explain:
-        "The damage-to-Mark Focus gain is once per round. The optional 1-Focus benefit can trigger on each qualifying hit, including allies’ turns.",
-    },
-    {
-      title: "Recover together.",
-      text: "Combat ends. You are at −2 Stamina and still have Recoveries. Must an ally use Heal before you can recover?",
-      options: ["Yes, always", "No. I can spend Recoveries outside combat"],
-      correct: 1,
-      explain:
-        "Dying prevents Catch Breath in combat. Outside combat, you can spend your own Recoveries without an action, provided you are not dead.",
-    },
-  ];
   function render() {
     const k = D.KITS[state.kit2],
       g = state.guide;
@@ -422,7 +374,6 @@
       )
       .join("");
     renderCampaign();
-    renderLesson();
     learning?.refresh();
   }
   function renderCampaign() {
@@ -453,34 +404,6 @@
     ).join('');
   }
 
-  function renderLesson() {
-    const i = state.guide.lesson,
-      lesson = LESSONS[i];
-    if (!lesson) {
-      $("#lessonCard").innerHTML =
-        '<span class="chapter">READY FOR YOUR FIRST ROUND</span><h2>You have a starting point.</h2><p>Mark a foe, choose an action, and watch for ways to help. You can look up everything else as you go.</p><button id="lessonPractice" class="primary-button">Try a practice encounter →</button>';
-      return;
-    }
-    $("#lessonCard").innerHTML =
-      '<span class="chapter">' +
-      (i + 1) +
-      " / 5</span><h2>" +
-      lesson.title +
-      "</h2><p>" +
-      lesson.text +
-      '</p><div class="lesson-options">' +
-      lesson.options
-        .map(
-          (o, j) =>
-            '<button class="secondary" data-answer="' +
-            j +
-            '">' +
-            o +
-            "</button>",
-        )
-        .join("") +
-      '</div><div id="lessonFeedback" role="status"></div>';
-  }
   function actionOptions() {
     return {
       target: $("#target")?.value || "",
@@ -904,37 +827,7 @@
       });
       return;
     }
-    if (b.dataset.answer !== undefined) {
-      const lesson = LESSONS[state.guide.lesson],
-        correct = Number(b.dataset.answer) === lesson.correct;
-      $("#lessonFeedback").innerHTML =
-        '<div class="lesson-feedback">' +
-        (correct ? "Exactly. " : "Not quite. ") +
-        lesson.explain +
-        '</div><button class="primary-button" id="nextLesson">' +
-        (state.guide.lesson === 4 ? "Finish lesson" : "Next idea →") +
-        "</button>";
-      return;
-    }
-    if (b.id === "nextLesson") {
-      commit({ type: "lesson" });
-      return;
-    }
-    if (b.id === "lessonPractice") {
-      if (mode === "live") {
-        notice(
-          "Use Return to practice at the top before trying a practice encounter.",
-        );
-        return;
-      }
-      view = "play";
-      if (!state.inCombat) commit({ type: "start" });
-      else {
-        phase = state.guide.phase;
-        render();
-      }
-      return;
-    }
+
   });
   window.addEventListener("storage", (e) => {
     if (e.key === key()) {
