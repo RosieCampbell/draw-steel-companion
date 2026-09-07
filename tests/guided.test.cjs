@@ -307,3 +307,19 @@ test('quiz cannot award the same answer twice after switching tabs',async t=>{
 test('campaign list editing saves literal text, persists, and undo restores removed entries',async t=>{
  const p=await page(t);p.click('[data-view="hero"]');p.click('[data-list="projects"][data-operation="add"]');const row=p.q('[data-list-row="projects"]');row.querySelector('[data-field="n"]').value='<b>Map</b>';row.querySelector('[data-field="p"]').value='3';row.querySelector('[data-field="g"]').value='10';p.click('[data-list="projects"][data-operation="save"]');assert.equal(p.state(PRACTICE).projects[0].n,'<b>Map</b>');p.click('[data-list="projects"][data-operation="remove"]');assert.equal(p.state(PRACTICE).projects.length,0);p.click('#undo');assert.equal(p.state(PRACTICE).projects[0].p,3);
 });
+test('saved equipment displays as text; Edit opens a form and Cancel discards changes', async t => {
+  const p = await page(t);
+  p.click('[data-view="hero"]');
+  assert.equal(p.q('[data-list-row="gear"] input'), null);
+  p.click('[data-list="gear"][data-operation="edit"]');
+  const original = p.q('[data-list-row="gear"] textarea').value;
+  p.q('[data-list-row="gear"] textarea').value = 'Discard this';
+  p.click('[data-list="gear"][data-operation="cancel"]');
+  assert.equal(p.q('[data-list-row="gear"] textarea'), null);
+  assert.ok(p.q('[data-list-row="gear"]').textContent.includes(original));
+  p.click('[data-list="gear"][data-operation="edit"]');
+  p.q('[data-list-row="gear"] textarea').value = 'Updated\nnotes';
+  p.click('[data-list="gear"][data-operation="save"]');
+  assert.equal(p.q('[data-list-row="gear"] textarea'), null);
+  assert.equal(p.state(PRACTICE).gear[0].d, 'Updated\nnotes');
+});

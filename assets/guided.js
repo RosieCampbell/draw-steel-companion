@@ -14,6 +14,7 @@
     phase = "rest",
     intent = "all",
     timer, learning;
+  const editingRows = new Set(), newRows = new Set();
   function read(key) {
     try {
       return localStorage.getItem(key);
@@ -437,14 +438,17 @@
     $('#campaignLists').innerHTML = Object.entries(schemas).map(([key, fields]) =>
       '<section><h3>' + titles[key] + '</h3>' + state[key].map((row, index) =>
         '<div class="campaign-row" data-list-row="' + key + '" data-index="' + index + '">' +
-        Object.entries(fields).map(([field, label]) => {
+        (editingRows.has(key + ':' + index) ? Object.entries(fields).map(([field, label]) => {
           const value = escapeText(String(row[field]));
           const control = field === 'd'
             ? '<textarea data-field="d" rows="3">' + value + '</textarea>'
             : '<input data-field="' + field + '" type="' + (typeof row[field] === 'number' ? 'number' : 'text') + '" value="' + value.replaceAll('"', '&quot;') + '">';
           return '<label class="campaign-field field-' + field + '">' + label + control + '</label>';
         }).join('') +
-        '<div class="campaign-actions"><button data-list="' + key + '" data-operation="save">Save changes</button><button data-list="' + key + '" data-operation="remove">Remove</button></div></div>'
+        '<div class="campaign-actions"><button data-list="' + key + '" data-operation="save">Save changes</button><button data-list="' + key + '" data-operation="cancel">Cancel</button></div>' :
+        '<div class="campaign-summary"><h4>' + escapeText(row.n || 'Unnamed ' + singular[key]) + '</h4>' +
+        (key === 'gear' ? '<p>' + escapeText(row.d || 'No notes.') + '</p>' : '<p>' + (key === 'projects' ? 'Progress: ' + row.p + ' / ' + row.g : 'Quantity: ' + row.c) + '</p>') +
+        '</div><div class="campaign-actions"><button data-list="' + key + '" data-operation="edit">Edit</button><button data-list="' + key + '" data-operation="remove">Remove</button></div>') + '</div>'
       ).join('') + '<button data-list="' + key + '" data-operation="add">Add ' + singular[key] + '</button></section>'
     ).join('');
   }
@@ -852,7 +856,25 @@
     }
     if (b.dataset.rule) { b.closest('dialog')?.close(); learning.open(b.dataset.rule); return; }
     if (b.dataset.quickDamage || b.dataset.quickHeal) { commit({type:'health',kind:b.dataset.quickDamage?'damage':'heal',amount:Number(b.dataset.quickDamage||b.dataset.quickHeal)});return; }
-    if (b.dataset.list) {const parent=b.closest('[data-list-row]'),row={};parent?.querySelectorAll('[data-field]').forEach(i=>row[i.dataset.field]=i.type==='number'?Number(i.value):i.value);commit({type:'list',key:b.dataset.list,operation:b.dataset.operation,index:Number(parent?.dataset.index),row});return;}
+    if (b.dataset.list) {
+      const key = b.dataset.list, operation = b.dataset.operation;
+      const parent = b.closest('[data-list-row]'), index = Number(parent?.dataset.index);
+      const token = key + ':' + index;
+      if (operation === 'edit') { editingRows.add(token); renderCampaign(); return; }
+      if (operation === 'cancel') {
+        if (newRows.has(token) && !commit({type:'list',key,operation:'remove',index})) return;
+        editingRows.delete(token); newRows.delete(token); renderCampaign(); return;
+      }
+      const row = {};
+      parent?.querySelectorAll('[data-field]').forEach(i => row[i.dataset.field] = i.type === 'number' ? Number(i.value) : i.value);
+      if (commit({type:'list',key,operation,index,row})) {
+        editingRows.clear(); newRows.clear();
+        if (operation === 'add') { const added = key + ':' + (state[key].length - 1); editingRows.add(added); newRows.add(added); }
+        renderCampaign();
+        if (operation === 'save') notice('Changes saved.');
+      }
+      return;
+    }
     if (b.dataset.health) {
       if (
         commit({

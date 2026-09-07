@@ -1132,3 +1132,6 @@ dialog .meta {
 .campaign-actions button { margin: 0; min-height: 40px; font-size: 13px; }
 .campaign-actions [data-operation="save"] { background: var(--blue); color: white; border-color: var(--blue); }
 @media (max-width: 480px) { .campaign-row { padding: 12px; } }
+.campaign-summary { grid-column: 1 / -1; min-width: 0; }
+.campaign-summary h4 { margin: 0 0 8px; font-size: 17px; }
+.campaign-summary p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; }
