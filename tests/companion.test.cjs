@@ -178,3 +178,8 @@ test('natural 20 remains tier 3 with a double bane; Patient Shot applies adjacen
   p.w.Math.random=()=>0.4;const adj=p.q('[data-tg="adj"]');adj.checked=true;adj.dispatchEvent(new p.w.Event('change'));
   p.click('#aRoll');await tick();assert.equal(p.q('#aDmg').textContent,'5');
 });
+
+ test('full sheet preserves guided notes and lesson progress',async t=>{
+  const p=await page(t);const saved=p.state();saved.guide={notes:'Remember the bridge',lesson:2,phase:'rest',used:{main:false,maneuver:false,move:false},log:[]};
+  const p2=await page(t,'index.html',{[KEY]:JSON.stringify(saved)});p2.click('[data-d="focus:1"]');assert.deepEqual(p2.state().guide,saved.guide);
+ });

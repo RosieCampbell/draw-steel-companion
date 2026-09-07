@@ -535,6 +535,11 @@ try{
         spec[2].forEach(function(k){if(!Number.isSafeInteger(row[k])||row[k]<0||row[k]>1000000)throw new Error('Invalid row number');});
       });
     });
+    // Preserve the guided prototype’s notes and turn metadata when using this sheet.
+    if(o.guide!==undefined){
+      if(!o.guide||typeof o.guide!=='object'||Array.isArray(o.guide)||JSON.stringify(o.guide).length>100000)throw new Error('Invalid guided metadata');
+      next.guide=o.guide;
+    }
     return JSON.parse(JSON.stringify(next));
   }
   var hist=[];

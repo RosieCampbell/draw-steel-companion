@@ -7,6 +7,10 @@ An unofficial, fan-made play companion for the **Draw Steel** TTRPG by MCDM Prod
 
 Both pages are self-contained HTML files: no build step or runtime dependencies. Open `index.html` for live play; open `trainer.html` to study. Web fonts are optional; system fonts work offline.
 
+## Guided prototype
+
+Open [guided.html](guided.html) to try the new **Play / My Hero / Learn** experience. First use starts in isolated practice mode; choosing live mode uses your existing saved hero at the same site address. The original play sheet remains the default. See [prototype scope and validation](docs/guided-prototype.md).
+
 ## During a session
 
 1. **Start combat** sets Focus to Victories and grants the ancestry surge. It starts round 1 without taking your turn.

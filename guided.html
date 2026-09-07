@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#f4f1e9" />
+    <title>Aravinthaya · Draw Steel Field Guide</title>
+    <link rel="stylesheet" href="assets/guided.css" />
+    <script defer src="assets/guided-engine.js"></script>
+    <script defer src="assets/guided.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to your next action</a>
+    <div class="app">
+      <header class="masthead">
+        <a
+          class="brand"
+          href="guided.html"
+          aria-label="Draw Steel Field Guide home"
+          ><span class="sigil" aria-hidden="true">✦</span
+          ><span
+            >DRAW STEEL<small>A FIELD GUIDE FOR ARAVINTHAYA</small></span
+          ></a
+        >
+        <div class="mode-tools">
+          <span id="modeLabel" class="mode">Practice</span
+          ><button id="switchMode" class="quiet">Use my saved hero</button>
+        </div>
+      </header>
+      <nav class="primary" aria-label="Main navigation">
+        <button data-view="play" aria-current="page">Play<span>01</span></button
+        ><button data-view="hero">My Hero<span>02</span></button
+        ><button data-view="learn">Learn<span>03</span></button
+        ><a href="index.html">Full play sheet ↗</a>
+      </nav>
+      <div id="modeNote" class="mode-note">
+        Try a round here. Practice never changes your saved hero.
+      </div>
+      <div class="layout">
+        <aside class="hero-rail" aria-label="Your hero at a glance">
+          <div class="identity">
+            <svg class="portrait" viewBox="0 0 100 120" aria-hidden="true">
+              <path
+                d="M50 3 89 24v58l-39 35L11 82V24Z"
+                fill="#dbe3df"
+                stroke="#486475"
+              />
+              <path
+                d="m28 85 7-20-9-19 9-20h30l9 20-9 19 7 20-22 15Z"
+                fill="#f4f1e9"
+                stroke="#486475"
+                stroke-width="2"
+              />
+              <path
+                d="m26 46 24 8 24-8M50 26v59M35 65l15 9 15-9M35 40h8m14 0h8"
+                fill="none"
+                stroke="#486475"
+                stroke-width="2"
+              />
+              <circle cx="50" cy="17" r="3" fill="#a47545" />
+            </svg>
+            <div>
+              <p class="eyebrow">Your tactician</p>
+              <h2>Aravinthaya</h2>
+              <p class="muted">Memonek · Mastermind · Level 1</p>
+            </div>
+          </div>
+          <div class="stamina">
+            <div class="stat-label">
+              <span
+                >Stamina
+                <button
+                  class="term"
+                  data-term="stamina"
+                  aria-label="Explain Stamina"
+                >
+                  ?
+                </button></span
+              ><span id="healthState">Steady</span>
+            </div>
+            <div class="health-number">
+              <strong id="stamina">33</strong
+              ><span>/ <span id="maxStamina">33</span></span>
+            </div>
+            <div class="health-track"><span id="healthFill"></span></div>
+            <p id="tempStamina" class="small muted"></p>
+            <button id="healthOpen" class="secondary full">
+              Record damage or healing
+            </button>
+          </div>
+          <div class="resource-pair">
+            <div>
+              <span
+                >Focus
+                <button
+                  class="term"
+                  data-term="focus"
+                  aria-label="Explain Focus"
+                >
+                  ?
+                </button></span
+              ><strong id="focus">0</strong>
+            </div>
+            <div>
+              <span
+                >Surges
+                <button
+                  class="term"
+                  data-term="surge"
+                  aria-label="Explain surges"
+                >
+                  ?
+                </button></span
+              ><strong id="surges">0</strong>
+            </div>
+          </div>
+          <div class="marked">
+            <span class="eyebrow">Your marked foe</span
+            ><strong id="markName">No one yet</strong>
+            <p class="small muted">Your party’s priority target.</p>
+          </div>
+          <div class="conditions">
+            <div class="stat-label">
+              <span class="eyebrow">Conditions</span
+              ><button id="conditionOpen" class="text-button">Manage</button>
+            </div>
+            <div id="conditionsList">
+              <p class="small muted">Nothing holding you back.</p>
+            </div>
+          </div>
+          <div class="rail-footer">
+            <button id="undo" class="quiet" disabled>↶ Undo last change</button>
+            <p id="saveStatus" class="small muted" role="status"></p>
+            <button id="download" class="text-button">Download backup</button>
+          </div>
+        </aside>
+        <main id="content" tabindex="-1">
+          <section id="playView">
+            <div class="section-heading">
+              <p class="eyebrow" id="roundLabel">BEFORE THE FIRST ROLL</p>
+              <h1 id="playTitle">A good plan starts here.</h1>
+              <p class="intro" id="playIntro">
+                You don’t need to know every rule. Just your next move.
+              </p>
+            </div>
+            <div class="phase-tabs" aria-label="Play perspective">
+              <button data-phase="turn">My turn</button
+              ><button data-phase="watch">Other turns</button
+              ><button data-phase="rest">Between fights</button>
+            </div>
+            <div id="restPanel" class="phase-panel">
+              <div class="feature-card">
+                <span class="chapter">01 / GET READY</span>
+                <h2>Give your party a direction.</h2>
+                <p>
+                  Choose a dangerous foe. Help your friends bring it down. Spend
+                  Focus when an opportunity matters.
+                </p>
+                <div class="ready-stats">
+                  <span><strong id="victories">0</strong> Victories</span
+                  ><span
+                    ><strong id="recoveries">10</strong> Recoveries ·
+                    <span id="recoveryValue">11</span> Stamina each</span
+                  >
+                </div>
+                <div class="button-row">
+                  <button id="start" class="primary-button">
+                    Begin an encounter <span aria-hidden="true">→</span></button
+                  ><button id="recover" class="secondary">
+                    Spend a Recovery
+                  </button>
+                </div>
+                <p class="small muted">
+                  After a fight, spend Recoveries to heal. Your Director decides
+                  whether you earn a Victory.
+                </p>
+                <button id="victory" class="text-button">
+                  Record 1 Victory
+                </button>
+              </div>
+              <div class="gentle-note">
+                <span aria-hidden="true">✦</span>
+                <p>
+                  <b>New to all of this?</b> Your job is to describe what
+                  Aravinthaya tries. The Director and the rest of the table help
+                  with what happens next.
+                  <button class="inline-link" data-view="learn">
+                    Try the first-turn lesson →
+                  </button>
+                </p>
+              </div>
+            </div>
+            <div id="turnPanel" class="phase-panel" hidden>
+              <div id="turnStartCard" class="callout">
+                <p>
+                  <b>Ready to take your turn?</b><br />Record its start to gain
+                  2 Focus.
+                </p>
+                <button id="beginTurn" class="primary-button">
+                  Begin my turn · +2 Focus
+                </button>
+              </div>
+              <div
+                id="actionBudget"
+                class="budget"
+                aria-label="Actions this turn"
+              ></div>
+              <div class="intent-heading">
+                <h2>What do you want to do?</h2>
+                <button class="text-button" id="resetIntent">Show all</button>
+              </div>
+              <div class="intents" aria-label="Choose your intention">
+                <button data-intent="hurt">Hurt a foe</button
+                ><button data-intent="help">Help a friend</button
+                ><button data-intent="protect">Protect</button
+                ><button data-intent="move">Move</button>
+              </div>
+              <div id="actionCards" class="action-grid"></div>
+              <button id="creative" class="creative">
+                <span>✧</span>
+                <div>
+                  <b>Have another idea?</b
+                  ><small
+                    >Talk to the Director. Your options aren’t limited to these
+                    cards.</small
+                  >
+                </div>
+                <span>→</span>
+              </button>
+              <div class="turn-footer">
+                <button id="endTurn" class="primary-button">
+                  Finish my turn →</button
+                ><button id="extraAction" class="text-button">
+                  Extra action or tracker correction
+                </button>
+              </div>
+            </div>
+            <div id="watchPanel" class="phase-panel" hidden>
+              <div class="watch-header">
+                <p>Your friends are acting. You’re still part of the plan.</p>
+                <div class="button-row">
+                  <button id="watchBeginTurn" class="primary-button">
+                    It’s my turn · +2 Focus</button
+                  ><button id="nextRound" class="secondary">
+                    Start next round
+                  </button>
+                </div>
+              </div>
+              <div class="event-list">
+                <article>
+                  <span class="event-icon">◎</span>
+                  <div>
+                    <h3>Someone damaged your Mark</h3>
+                    <p>
+                      First time this round? Gain 1 Focus. On any qualifying
+                      hit, you may also spend 1 Focus for a Mark benefit.
+                    </p>
+                    <div class="button-row">
+                      <button id="markHit" class="secondary">
+                        First hit · gain 1 Focus</button
+                      ><button id="markPerk" class="text-button">
+                        Choose a Mark benefit →
+                      </button>
+                    </div>
+                    <small id="markHitStatus"></small>
+                  </div>
+                </article>
+                <article>
+                  <span class="event-icon">✦</span>
+                  <div>
+                    <h3>An ally used a heroic ability</h3>
+                    <p>
+                      If they’re within 10 squares, gain 1 Focus the first time
+                      this happens each round.
+                    </p>
+                    <button id="allyHeroic" class="secondary">
+                      Confirm · gain 1 Focus</button
+                    ><small id="allyStatus"></small>
+                  </div>
+                </article>
+                <article>
+                  <span class="event-icon">↗</span>
+                  <div>
+                    <h3>A creature moves within 10 squares</h3>
+                    <p>
+                      With Overwatch, an ally can make a free strike at any
+                      point during that movement.
+                    </p>
+                    <button id="overwatch" class="secondary">
+                      Use Overwatch</button
+                    ><small id="overwatchStatus"></small>
+                  </div>
+                </article>
+              </div>
+              <details class="rule-detail">
+                <summary>What about opportunity attacks?</summary>
+                <p>
+                  If an adjacent enemy willingly leaves your reach without
+                  shifting, you may make a melee free strike. You can’t do so
+                  with a bane against them. This is a free triggered action; it
+                  doesn’t spend Overwatch, but Dazed prevents it.
+                </p>
+                <p id="freeStrikeNumbers"></p>
+                <a href="trainer.html#combat">Read the combat reference ↗</a>
+              </details>
+              <div class="turn-footer">
+                <button id="endCombat" class="secondary">
+                  The encounter is over
+                </button>
+                <p class="small muted">
+                  Resolve saves at the end of your own turn. New round is a
+                  separate event.
+                </p>
+              </div>
+            </div>
+            <details class="journal">
+              <summary>What happened this encounter</summary>
+              <ol id="journal"></ol>
+            </details>
+          </section>
+          <section id="heroView" hidden>
+            <div class="section-heading">
+              <p class="eyebrow">02 / MY HERO</p>
+              <h1>The mind behind the plan.</h1>
+              <p class="intro">
+                You turn the party’s opportunities into everyone’s advantage.
+              </p>
+            </div>
+            <div class="feature-card">
+              <h2>A strategist, not a spectator.</h2>
+              <p>
+                Mark a priority enemy. Create openings for your allies. Watch
+                for chances to turn a hit into more damage, healing, or
+                movement.
+              </p>
+              <div class="characteristics">
+                <span>Might <b>+2</b></span
+                ><span>Agility <b>−1</b></span
+                ><span>Reason <b>+2</b></span
+                ><span>Intuition <b>−1</b></span
+                ><span>Presence <b>+2</b></span>
+              </div>
+              <p class="small">
+                Your attacks use Might. Your Reason sets the strength of your
+                Mark benefits and potencies.
+              </p>
+            </div>
+            <div class="hero-grid">
+              <article class="plain-card">
+                <p class="eyebrow">YOUR LOADOUT</p>
+                <h2 id="kitName">Shining Armor + Sniper</h2>
+                <p id="kitSummary"></p>
+                <label for="kitSelect">Change after a respite</label
+                ><select id="kitSelect">
+                  <option value="shining">Shining Armor + Sniper</option>
+                  <option value="mountain">
+                    Mountain + Sniper (Heelcutter)
+                  </option>
+                </select>
+              </article>
+              <article class="plain-card">
+                <p class="eyebrow">ALWAYS WITH YOU</p>
+                <h2>Built a little differently.</h2>
+                <ul>
+                  <li>You can’t be surprised.</li>
+                  <li>Gain 1 surge when combat starts.</li>
+                  <li>
+                    Enemies can’t move through your space unless you allow it.
+                  </li>
+                  <li>
+                    Reduce falls by 2 squares. Count one size smaller when
+                    another creature tries to force move you.
+                  </li>
+                </ul>
+              </article>
+            </div>
+            <div class="plain-card">
+              <h2>Notes for next time</h2>
+              <label for="notes">Names, discoveries, unfinished plans</label
+              ><textarea
+                id="notes"
+                rows="4"
+                maxlength="20000"
+                placeholder="What would Aravinthaya want to remember?"
+              ></textarea
+              ><button id="saveNotes" class="secondary">Save notes</button>
+            </div>
+            <details class="rule-detail">
+              <summary>Resource adjustments &amp; saved data</summary>
+              <div id="adjustments"></div>
+              <p>
+                The full sheet has your projects, inventory, XP and other
+                campaign records. Guided live play uses the same hero data; use
+                one tracker at a time.
+              </p>
+              <a href="index.html">Open full play sheet ↗</a
+              ><label for="restoreFile"
+                >Restore a hero backup (applies to the current mode)</label
+              ><input
+                id="restoreFile"
+                type="file"
+                accept=".json,application/json"
+              />
+            </details>
+          </section>
+          <section id="learnView" hidden>
+            <div class="section-heading">
+              <p class="eyebrow">03 / LEARN BY DOING</p>
+              <h1>One good turn is enough.</h1>
+              <p class="intro">
+                Five small ideas. Then you’re ready to join the table.
+              </p>
+            </div>
+            <div id="lessonCard" class="feature-card"></div>
+            <div class="plain-card">
+              <h2>Understand a word, keep your place.</h2>
+              <div class="glossary-buttons">
+                <button data-term="focus">Focus</button
+                ><button data-term="mark">Mark</button
+                ><button data-term="edge">Edge &amp; bane</button
+                ><button data-term="recovery">Recovery</button
+                ><button data-term="surge">Surges</button
+                ><button data-term="turn">Turn vs. round</button>
+              </div>
+              <p>
+                <a href="trainer.html"
+                  >Open the full trainer: dice, quizzes &amp; flashcards ↗</a
+                >
+              </p>
+            </div>
+          </section>
+          <footer class="page-footer">
+            An unofficial Draw Steel play companion. Draw Steel™ &amp; © MCDM
+            Productions LLC.<br />Rules are reminders; your table and the
+            Director resolve the situation.
+          </footer>
+        </main>
+      </div>
+    </div>
+    <dialog id="actionDialog" aria-labelledby="actionTitle">
+      <div class="dialog-header">
+        <p class="eyebrow">YOUR NEXT MOVE</p>
+        <button class="close" data-close aria-label="Close action">×</button>
+      </div>
+      <h2 id="actionTitle"></h2>
+      <div id="actionBody"></div>
+    </dialog>
+    <dialog id="utilityDialog" aria-labelledby="utilityTitle">
+      <div class="dialog-header">
+        <p class="eyebrow">FIELD NOTES</p>
+        <button class="close" data-close aria-label="Close details">×</button>
+      </div>
+      <h2 id="utilityTitle"></h2>
+      <div id="utilityBody"></div>
+    </dialog>
+    <div id="notice" role="status" aria-live="polite"></div>
+    <noscript
+      ><p>
+        This companion needs JavaScript. The
+        <a href="index.html">full sheet</a> also contains readable rules.
+      </p></noscript
+    >
+  </body>
+</html>
