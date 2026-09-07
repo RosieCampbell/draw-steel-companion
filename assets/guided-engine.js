@@ -256,7 +256,7 @@
         intent: "help",
         blurb: "Give an ally an immediate signature ability.",
         detail:
-          "One ally uses a signature ability as a free triggered action. They resolve their own roll. The 5-Focus upgrade for two allies is available through the full reference.",
+          "One ally uses a signature ability as a free triggered action. They resolve their own roll. To use the 5-Focus upgrade for two allies, record this action and subtract 2 additional Focus directly.",
         target: true,
       },
       squad: {
@@ -317,7 +317,7 @@
         intent: "creative",
         blurb: "Describe your idea. The sheet is not the limit.",
         detail:
-          "Ask the Director whether your idea needs a roll and which action it uses. Use the full reference for Charge, Grab, Aid Attack, Heal and other actions. This card does not spend an action automatically.",
+          "Ask the Director whether your idea needs a roll and which action it uses. Learn explains Charge, Grab, Aid Attack, Heal and other general actions. This card does not spend an action automatically.",
       },
     };
   }
@@ -676,6 +676,23 @@
             ".",
         );
         break;
+      case "set": {
+        const limits={stam:[-k.wind,k.max],temp:[0,1000000],focus:[0,1000000],surge:[0,1000000],rec:[0,10],tok:[0,1000000],vict:[0,1000000],wealth:[0,1000000],renown:[0,1000000],xp:[0,1000000]};
+        const limit=limits[event.key];
+        if(!limit||!Number.isSafeInteger(event.value)||event.value<limit[0]||event.value>limit[1])throw Error('Enter a whole number between '+(limit?limit.join(' and '):'the allowed limits')+'.');
+        s[event.key]=event.value;log(s,'Set '+event.key+' to '+event.value+'.');break;
+      }
+      case "list": {
+        const schemas={projects:{n:'text',p:'number',g:'number'},items:{n:'text',c:'number'},gear:{n:'text',d:'text'}};
+        const schema=schemas[event.key];if(!schema)throw Error('Unknown list.');
+        if(event.operation==='add'){if(s[event.key].length>=500)throw Error('List is full.');s[event.key].push(Object.fromEntries(Object.entries(schema).map(([k,type])=>[k,type==='text'?'':0])));}
+        else {if(!Number.isInteger(event.index)||!s[event.key][event.index])throw Error('Unknown row.');
+          if(event.operation==='remove')s[event.key].splice(event.index,1);
+          else if(event.operation==='save'){const row={};for(const [key,type] of Object.entries(schema)){const value=event.row[key];if(type==='text'&&(typeof value!=='string'||value.length>20000))throw Error('Invalid text.');if(type==='number'&&(!Number.isSafeInteger(value)||value<0||value>1000000))throw Error('Use a nonnegative whole number.');row[key]=value;}s[event.key][event.index]=row;}
+          else throw Error('Unknown list operation.');
+        }
+        log(s,'Updated '+event.key+'.');break;
+      }
       case "kit":
         if (s.inCombat || !Object.hasOwn(KITS, event.kit))
           throw Error("Change kits after a respite, outside combat.");
@@ -695,7 +712,22 @@
     }
     return normalize(s);
   }
+  function origin(id,s){
+    if(['advance','disengage','recover','defend','creative'].includes(id))return {scope:'everyone',label:'Everyone',detail:'A general action. Your stats and kit may change its numbers.'};
+    if(id==='patient')return {scope:'hero',label:'Your kit · Sniper',detail:'A signature ability from Sniper. It is not a basic action every hero gets.'};
+    if(id==='melee')return {scope:'hero',label:'Your kit · '+KITS[s.kit2].name,detail:'A signature ability from your selected melee kit.'};
+    return {scope:'hero',label:'Your class · Tactician',detail:'A Tactician feature or ability selected for Aravinthaya.'};
+  }
+  function breakdown(s,id,ranged=false){
+    const mountain=s.kit2==='mountain';
+    if(id==='patient')return {base:[3,6,9],stat:[2,2,2],kit:[0,0,4],treasure:[0,0,0],kitName:'Sniper'};
+    if(id==='melee')return {base:mountain?[3,5,9]:[3,6,9],stat:[2,2,2],kit:mountain?[0,0,4]:[2,2,2],treasure:mountain?[1,1,1]:[0,0,0],kitName:KITS[s.kit2].name};
+    if(id==='mind')return {base:[4,6,10],stat:[2,2,2],kit:ranged?[0,0,4]:mountain?[0,0,4]:[2,2,2],treasure:!ranged&&mountain?[1,1,1]:[0,0,0],kitName:ranged?'Sniper':KITS[s.kit2].name};
+    return null;
+  }
   return {
+    origin,
+    breakdown,
     fresh,
     validate,
     apply,

@@ -157,7 +157,7 @@ async function page(t, storage = {}) {
       Object.entries(storage).forEach(([k, v]) => w.localStorage.setItem(k, v));
     },
   });
-  for (const file of ["guided-engine.js", "guided.js"])
+  for (const file of ["guided-engine.js", "guided-learning.js", "guided.js"])
     dom.window.eval(
       fs.readFileSync(path.join(__dirname, "../assets", file), "utf8"),
     );
@@ -246,7 +246,7 @@ test("live mode requires explicit confirmation and preserves existing campaign d
   p.click("#switchMode");
   assert.equal(p.q("#modeLabel").textContent, "Practice");
   p.click("#confirmMode");
-  assert.equal(p.q("#stamina").textContent, "15");
+  assert.equal(p.q("#stamina").value, "15");
   p.click("#start");
   assert.equal(p.state(LIVE).focus, 4);
   assert.deepEqual(p.state(LIVE).projects, s.projects);
@@ -282,4 +282,28 @@ test("all labels target controls and all linked local pages exist", async (t) =>
     const file = a.getAttribute("href").split("#")[0];
     if (file) assert.ok(fs.existsSync(path.join(__dirname, "..", file)), file);
   }
+});
+
+test('direct counters apply damage through temporary Stamina and support editing and undo without dialogs',async t=>{
+ const p=await page(t);p.click('[data-quick-damage="5"]');assert.equal(p.state(PRACTICE).stam,D.fresh().stam-5);assert.equal(p.q('dialog[open]'),null);
+ const input=p.q('#focus');input.value='7';input.dispatchEvent(new p.w.Event('change',{bubbles:true}));assert.equal(p.state(PRACTICE).focus,7);p.click('#undo');assert.equal(p.state(PRACTICE).focus,0);
+ input.value='-1';input.dispatchEvent(new p.w.Event('change',{bubbles:true}));assert.equal(p.state(PRACTICE).focus,0);assert.equal(input.value,'0');
+});
+test('damage breakdown matches actual unmodified ability damage for both kits and weapons',()=>{
+ for(const kit of ['shining','mountain'])for(const id of ['patient','melee','mind'])for(const ranged of [false,true]){
+ const s=start();s.kit2=kit;const b=D.breakdown(s,id,ranged);for(const [i,dice] of [[0,[1,1]],[1,[6,6]],[2,[10,10]]]){const r=D.rollResult(s,id,{...options,d1:dice[0],d2:dice[1],markEffect:false,ranged});assert.equal(r.damage,b.base[i]+b.stat[i]+b.kit[i]+b.treasure[i],kit+' '+id+' '+i);}
+ }
+});
+test('learning search separates general and personal rules; practice and flashcards leave the hero untouched',async t=>{
+ const p=await page(t);p.click('#start');const before=p.w.localStorage.getItem(PRACTICE);p.click('[data-view="learn"]');p.click('[data-learn="rules"]');
+ p.q('#learnScope').value='everyone';p.q('#learnScope').dispatchEvent(new p.w.Event('change'));assert.match(p.q('#ruleLibrary').textContent,/Catch Breath/);assert.equal(p.q('#rule-ability-patient'),null);
+ p.click('[data-learn="rolls"]');p.click('#practiceResolve');assert.match(p.q('#practiceResult').textContent,/Failure/);
+ p.q('#practiceKind').value='patient';p.q('#practiceKind').dispatchEvent(new p.w.Event('change'));assert.equal(p.q('#practiceKind').value,'patient',p.q('#practiceKind').outerHTML);p.click('#practiceResolve');assert.match(p.q('#practiceResult').textContent,/5 damage/);assert.doesNotMatch(p.q('#practiceResult').textContent,/undefined/);
+ p.click('[data-learn="cards"]');p.click('#flipCard');p.click('#knowCard');assert.ok(p.w.localStorage.getItem('ds-guided-study-v1'));assert.equal(p.w.localStorage.getItem(PRACTICE),before);
+});
+test('quiz cannot award the same answer twice after switching tabs',async t=>{
+ const p=await page(t);p.click('[data-view="learn"]');p.click('[data-learn="quiz"]');p.click('[data-quiz-answer="1"]');p.click('[data-learn="rules"]');p.click('[data-learn="quiz"]');p.click('[data-quiz-answer="1"]');p.click('#nextQuiz');assert.match(p.q('#knowledgeQuiz').textContent,/1 correct/);
+});
+test('campaign list editing saves literal text, persists, and undo restores removed entries',async t=>{
+ const p=await page(t);p.click('[data-view="hero"]');p.click('[data-list="projects"][data-operation="add"]');const row=p.q('[data-list-row="projects"]');row.querySelector('[data-field="n"]').value='<b>Map</b>';row.querySelector('[data-field="p"]').value='3';row.querySelector('[data-field="g"]').value='10';p.click('[data-list="projects"][data-operation="save"]');assert.equal(p.state(PRACTICE).projects[0].n,'<b>Map</b>');p.click('[data-list="projects"][data-operation="remove"]');assert.equal(p.state(PRACTICE).projects.length,0);p.click('#undo');assert.equal(p.state(PRACTICE).projects[0].p,3);
 });

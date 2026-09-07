@@ -1082,3 +1082,35 @@ dialog .meta {
     transition: none !important;
   }
 }
+/* Direct resource editing and integrated learning. */
+.editable-stat {appearance:textfield; border:1px solid var(--line,#ccc); border-radius:8px; background:transparent; color:inherit; font:inherit; font-weight:650; text-align:center; padding:4px; width:2.8em; min-width:0;}
+.editable-stat::-webkit-inner-spin-button {appearance:none}
+.health-number .editable-stat {font-size:3rem; width:2.4em}
+.inline-counter {display:flex;align-items:center;gap:5px;margin-top:8px}
+.inline-counter button,.quick-controls button {min-width:36px;min-height:38px;border:1px solid var(--line,#ccc);border-radius:7px;background:transparent;color:inherit}
+.inline-counter .editable-stat {font-size:1.5rem;width:2.2em}
+.quick-controls {display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.inline-health {margin-top:12px;font-size:.85rem}
+.inline-health summary {cursor:pointer;padding:8px 0}
+.inline-health input {width:100%;margin:8px 0}
+.origin {display:inline-block;font-size:.7rem;font-weight:650;letter-spacing:.03em;padding:4px 8px;border-radius:5px;background:#e5eee8;color:#355547;margin-bottom:8px}
+.origin.personal,.origin.hero {background:#eee7da;color:#70562b}
+.scope-legend {display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;font-size:.85rem;margin:20px 0}
+.learn-nav {display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}
+.learn-nav button {padding:10px 16px;border:1px solid var(--line,#ccc);border-radius:8px;background:transparent;color:inherit}
+.learn-nav button[aria-current=page] {background:var(--ink,#243c35);color:var(--paper,#fffdf5)}
+.library-rule {border-bottom:1px solid var(--line,#ccc);padding:16px 0}
+.library-rule summary {cursor:pointer;display:flex;align-items:baseline;gap:12px;font-weight:600}
+.library-rule>div {padding:8px 12px 12px;max-width:75ch}
+.rule-example {border-left:3px solid #9c8052;padding:12px 16px;background:#f0ecdf}
+.math-breakdown {margin:20px 0;overflow-x:auto}
+.math-breakdown table {width:100%;font-size:.83rem;border-collapse:collapse}
+.math-breakdown th,.math-breakdown td {padding:9px 7px;border-bottom:1px solid var(--line,#ccc);text-align:left}
+.math-breakdown tbody tr:last-child {font-weight:700;background:#e5eee8}
+.study-card {padding:28px;margin:20px 0;border:1px solid var(--line,#ccc);border-radius:12px;background:var(--paper,#fffcf5)}
+#campaignFields,.campaign-row {display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin:16px 0}
+#campaignFields label,.campaign-row label {flex:1 1 130px;min-width:0}
+#campaignFields input,.campaign-row input {display:block;width:100%;margin-top:6px}
+.campaign-row button,#campaignLists>section>button {padding:9px;border:1px solid var(--line,#ccc);border-radius:6px;background:transparent;color:inherit}
+#campaignLists section {padding:14px 0;border-bottom:1px solid var(--line,#ccc)}
+@media(max-width:600px){.resource-pair{grid-template-columns:1fr 1fr}.inline-counter{gap:2px}.inline-counter button{min-width:30px}.library-rule summary{flex-wrap:wrap;gap:2px}.health-number .editable-stat{font-size:2.5rem}}

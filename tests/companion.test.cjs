@@ -102,20 +102,20 @@ test('search opens matching reference, clears cleanly, and glossary supports key
 });
 
 test('trainer persists round flags, Mark and Victories across reload; undo restores state',async t=>{
-  const p=await page(t,'trainer.html');p.set('#tmVict','3','change');p.click('#tmStart');p.set('#tmMark','Ogre','change');p.click('#tmGainMark');p.click('#tmTrig');p.click('#tmTurn');
+  const p=await page(t,'legacy-trainer.html');p.set('#tmVict','3','change');p.click('#tmStart');p.set('#tmMark','Ogre','change');p.click('#tmGainMark');p.click('#tmTrig');p.click('#tmTurn');
   assert.equal(p.state().focus,6);assert.equal(p.state().markUsed,true);assert.equal(p.state().trigUsed,true);
-  const p2=await page(t,'trainer.html',{[TMKEY]:JSON.stringify(p.state())},'#tablemode');
+  const p2=await page(t,'legacy-trainer.html',{[TMKEY]:JSON.stringify(p.state())},'#tablemode');
   assert.equal(p2.q('#tmMark').value,'Ogre');assert.equal(p2.q('#tmVict').value,'3');assert.equal(p2.q('#tmTurn').disabled,true);
   p2.click('#tmRound');assert.equal(p2.state().markUsed,false);p2.click('#tmUndo');assert.equal(p2.state().markUsed,true);
 });
 
 test('trainer dying recovery restriction changes when combat ends',async t=>{
-  const p=await page(t,'trainer.html');p.click('#tmStart');for(let i=0;i<7;i++)p.click('[data-stadj="-5"]');
+  const p=await page(t,'legacy-trainer.html');p.click('#tmStart');for(let i=0;i<7;i++)p.click('[data-stadj="-5"]');
   assert.equal(p.state().stam,-2);assert.equal(p.q('#tmBreath').disabled,true);p.click('#tmEnd');p.click('#tmBreath');assert.equal(p.state().stam,9);assert.equal(p.state().rec,9);
 });
 
 test('Mind Game always includes exactly one Mark edge, including a checked checkbox',async t=>{
-  const p=await page(t,'trainer.html');p.w.Math.random=()=>0.4; // 5+5, +2 Might; double edge would incorrectly reach tier 3
+  const p=await page(t,'legacy-trainer.html');p.w.Math.random=()=>0.4; // 5+5, +2 Might; double edge would incorrectly reach tier 3
   p.click('[data-abil="mindm"]');assert.equal(p.q('#abMark').disabled,true);p.click('#aRoll');await tick();
   assert.equal(p.q('#aDmg').textContent,'10');assert.match(p.q('#aMath').textContent,/\+2.*= 14/);
   p.q('#abMark').checked=true;p.click('#aRoll');await tick();assert.equal(p.q('#aDmg').textContent,'10');
@@ -123,14 +123,14 @@ test('Mind Game always includes exactly one Mark edge, including a checked check
 });
 
 test('trainer tabs expose selected panel and support arrow keys',async t=>{
-  const p=await page(t,'trainer.html',{},'#conditions');const tab=p.q('[data-tab="conditions"]');
+  const p=await page(t,'legacy-trainer.html',{},'#conditions');const tab=p.q('[data-tab="conditions"]');
   assert.equal(tab.getAttribute('aria-selected'),'true');assert.equal(tab.tabIndex,0);
   tab.dispatchEvent(new p.w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));
   assert.equal(p.q('[data-tab="resources"]').getAttribute('aria-selected'),'true');assert.equal(p.q('#resources').classList.contains('active'),true);
 });
 
 test('every static label target and internal link exists; HTML IDs are unique',async t=>{
-  for(const file of ['index.html','trainer.html']){
+  for(const file of ['index.html','legacy-trainer.html']){
     const p=await page(t,file);const ids=[...p.d.querySelectorAll('[id]')].map(e=>e.id);
     assert.equal(new Set(ids).size,ids.length,file+' duplicate IDs');
     for(const e of p.d.querySelectorAll('label[for]'))assert.ok(p.d.getElementById(e.htmlFor),e.htmlFor);
@@ -171,7 +171,7 @@ test('save failure is visibly reported instead of claiming success',async t=>{
 });
 
 test('natural 20 remains tier 3 with a double bane; Patient Shot applies adjacent bane',async t=>{
-  const p=await page(t,'trainer.html');p.w.Math.random=()=>0.99;
+  const p=await page(t,'legacy-trainer.html');p.w.Math.random=()=>0.99;
   p.click('[data-ab-eb="bane"][data-dir="1"]');p.click('[data-ab-eb="bane"][data-dir="1"]');
   p.click('#aRoll');await tick();assert.equal(p.q('#aDmg').textContent,'15');assert.equal(p.q('#aCrit').classList.contains('show'),true);
   p.click('[data-ab-eb="bane"][data-dir="-1"]');p.click('[data-ab-eb="bane"][data-dir="-1"]');

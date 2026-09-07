@@ -7,6 +7,7 @@
     <title>Aravinthaya · Draw Steel Field Guide</title>
     <link rel="stylesheet" href="assets/guided.css" />
     <script defer src="assets/guided-engine.js"></script>
+    <script defer src="assets/guided-learning.js"></script>
     <script defer src="assets/guided.js"></script>
   </head>
   <body>
@@ -31,7 +32,7 @@
         <button data-view="play" aria-current="page">Play<span>01</span></button
         ><button data-view="hero">My Hero<span>02</span></button
         ><button data-view="learn">Learn<span>03</span></button
-        ><a href="index.html">Full play sheet ↗</a>
+        >
       </nav>
       <div id="modeNote" class="mode-note">
         Try a round here. Practice never changes your saved hero.
@@ -79,14 +80,13 @@
               ><span id="healthState">Steady</span>
             </div>
             <div class="health-number">
-              <strong id="stamina">33</strong
+              <input id="stamina" type="number" inputmode="numeric" aria-label="Set current Stamina" value="33" class="editable-stat"
               ><span>/ <span id="maxStamina">33</span></span>
             </div>
             <div class="health-track"><span id="healthFill"></span></div>
             <p id="tempStamina" class="small muted"></p>
-            <button id="healthOpen" class="secondary full">
-              Record damage or healing
-            </button>
+            <div class="quick-controls" aria-label="Stamina shortcuts"><button data-quick-damage="5" aria-label="Take 5 damage">−5</button><button data-quick-damage="1" aria-label="Take 1 damage">−1</button><button data-quick-heal="1" aria-label="Heal 1 Stamina">+1</button><button data-quick-heal="5" aria-label="Heal 5 Stamina">+5</button></div>
+            <details class="inline-health"><summary>Damage amount, healing &amp; temporary Stamina</summary><label for="healthAmount">Amount</label><input id="healthAmount" type="number" min="1" max="9999" value="1"><div class="button-row"><button class="secondary" data-health="damage">Take damage</button><button class="secondary" data-health="heal">Heal</button><button class="secondary" data-health="loss">Direct loss (bleeding)</button><button class="secondary" data-health="temp">Gain temporary Stamina</button></div></details><p class="small muted">Click the number to edit it. − buttons apply damage to temporary Stamina first.</p>
           </div>
           <div class="resource-pair">
             <div>
@@ -99,7 +99,7 @@
                 >
                   ?
                 </button></span
-              ><strong id="focus">0</strong>
+              ><div class="inline-counter"><button data-adjust="focus" data-delta="-1" aria-label="Decrease focus">−</button><input id="focus" type="number" min="0" value="0" aria-label="Set focus" class="editable-stat"><button data-adjust="focus" data-delta="1" aria-label="Increase focus">+</button></div>
             </div>
             <div>
               <span
@@ -111,13 +111,13 @@
                 >
                   ?
                 </button></span
-              ><strong id="surges">0</strong>
+              ><div class="inline-counter"><button data-adjust="surge" data-delta="-1" aria-label="Decrease surge">−</button><input id="surges" type="number" min="0" value="0" aria-label="Set surge" class="editable-stat"><button data-adjust="surge" data-delta="1" aria-label="Increase surge">+</button></div>
             </div>
           </div>
           <div class="marked">
             <span class="eyebrow">Your marked foe</span
             ><strong id="markName">No one yet</strong>
-            <p class="small muted">Your party’s priority target.</p>
+            <p class="small muted">Your Tactician Mark applies to this creature.</p>
           </div>
           <div class="conditions">
             <div class="stat-label">
@@ -138,9 +138,9 @@
           <section id="playView">
             <div class="section-heading">
               <p class="eyebrow" id="roundLabel">BEFORE THE FIRST ROLL</p>
-              <h1 id="playTitle">A good plan starts here.</h1>
+              <h1 id="playTitle">Before combat</h1>
               <p class="intro" id="playIntro">
-                You don’t need to know every rule. Just your next move.
+                Start an encounter to track your turns, Focus and actions.
               </p>
             </div>
             <div class="phase-tabs" aria-label="Play perspective">
@@ -151,10 +151,9 @@
             <div id="restPanel" class="phase-panel">
               <div class="feature-card">
                 <span class="chapter">01 / GET READY</span>
-                <h2>Give your party a direction.</h2>
+                <h2>Starting a combat encounter</h2>
                 <p>
-                  Choose a dangerous foe. Help your friends bring it down. Spend
-                  Focus when an opportunity matters.
+                  Your Tactician feature sets your starting Focus to your Victories. Your Memonek ancestry also grants 1 surge.
                 </p>
                 <div class="ready-stats">
                   <span><strong id="victories">0</strong> Victories</span
@@ -193,7 +192,7 @@
             <div id="turnPanel" class="phase-panel" hidden>
               <div id="turnStartCard" class="callout">
                 <p>
-                  <b>Ready to take your turn?</b><br />Record its start to gain
+                  <b>Start your turn</b><br />Record its start to gain
                   2 Focus.
                 </p>
                 <button id="beginTurn" class="primary-button">
@@ -237,7 +236,7 @@
             </div>
             <div id="watchPanel" class="phase-panel" hidden>
               <div class="watch-header">
-                <p>Your friends are acting. You’re still part of the plan.</p>
+                <p>Confirm an event below when it happens at the table.</p>
                 <div class="button-row">
                   <button id="watchBeginTurn" class="primary-button">
                     It’s my turn · +2 Focus</button
@@ -301,7 +300,7 @@
                   doesn’t spend Overwatch, but Dazed prevents it.
                 </p>
                 <p id="freeStrikeNumbers"></p>
-                <a href="trainer.html#combat">Read the combat reference ↗</a>
+                <button class="text-button" data-rule="turns">Combat rules →</button>
               </details>
               <div class="turn-footer">
                 <button id="endCombat" class="secondary">
@@ -321,17 +320,15 @@
           <section id="heroView" hidden>
             <div class="section-heading">
               <p class="eyebrow">02 / MY HERO</p>
-              <h1>The mind behind the plan.</h1>
+              <h1>Aravinthaya</h1>
               <p class="intro">
-                You turn the party’s opportunities into everyone’s advantage.
+                Level 1 Memonek tactician · Mastermind
               </p>
             </div>
             <div class="feature-card">
-              <h2>A strategist, not a spectator.</h2>
+              <h2>Your class: Tactician</h2>
               <p>
-                Mark a priority enemy. Create openings for your allies. Watch
-                for chances to turn a hit into more damage, healing, or
-                movement.
+                Your Mark gives eligible allies an edge against one creature. You can spend Focus on heroic abilities and on benefits when that creature takes rolled damage.
               </p>
               <div class="characteristics">
                 <span>Might <b>+2</b></span
@@ -347,7 +344,7 @@
             </div>
             <div class="hero-grid">
               <article class="plain-card">
-                <p class="eyebrow">YOUR LOADOUT</p>
+                <p class="eyebrow">YOUR KITS</p>
                 <h2 id="kitName">Shining Armor + Sniper</h2>
                 <p id="kitSummary"></p>
                 <label for="kitSelect">Change after a respite</label
@@ -359,8 +356,8 @@
                 </select>
               </article>
               <article class="plain-card">
-                <p class="eyebrow">ALWAYS WITH YOU</p>
-                <h2>Built a little differently.</h2>
+                <p class="eyebrow">YOUR ANCESTRY</p>
+                <h2>Your ancestry: Memonek</h2>
                 <ul>
                   <li>You can’t be surprised.</li>
                   <li>Gain 1 surge when combat starts.</li>
@@ -385,16 +382,11 @@
               ></textarea
               ><button id="saveNotes" class="secondary">Save notes</button>
             </div>
+            <section class="plain-card"><h2>Campaign records</h2><p class="small muted">Edit a field, then click Save on that row. Changes can be undone.</p><div id="campaignFields"></div><div id="campaignLists"></div></section>
             <details class="rule-detail">
               <summary>Resource adjustments &amp; saved data</summary>
               <div id="adjustments"></div>
-              <p>
-                The full sheet has your projects, inventory, XP and other
-                campaign records. Guided live play uses the same hero data; use
-                one tracker at a time.
-              </p>
-              <a href="index.html">Open full play sheet ↗</a
-              ><label for="restoreFile"
+              <label for="restoreFile"
                 >Restore a hero backup (applies to the current mode)</label
               ><input
                 id="restoreFile"
@@ -404,30 +396,14 @@
             </details>
           </section>
           <section id="learnView" hidden>
-            <div class="section-heading">
-              <p class="eyebrow">03 / LEARN BY DOING</p>
-              <h1>One good turn is enough.</h1>
-              <p class="intro">
-                Five small ideas. Then you’re ready to join the table.
-              </p>
-            </div>
-            <div id="lessonCard" class="feature-card"></div>
-            <div class="plain-card">
-              <h2>Understand a word, keep your place.</h2>
-              <div class="glossary-buttons">
-                <button data-term="focus">Focus</button
-                ><button data-term="mark">Mark</button
-                ><button data-term="edge">Edge &amp; bane</button
-                ><button data-term="recovery">Recovery</button
-                ><button data-term="surge">Surges</button
-                ><button data-term="turn">Turn vs. round</button>
-              </div>
-              <p>
-                <a href="trainer.html"
-                  >Open the full trainer: dice, quizzes &amp; flashcards ↗</a
-                >
-              </p>
-            </div>
+            <div class="section-heading"><p class="eyebrow">03 / LEARN</p><h1>Rules, with your numbers.</h1><p class="intro">Learn a rule, see what changes for Aravinthaya, and try it without spending resources.</p></div>
+            <div class="scope-legend"><span class="origin general">Everyone</span><span>Rules any hero can use.</span><span class="origin personal">Your hero</span><span>Features from your class, ancestry, kit or choices.</span></div>
+            <nav class="learn-nav" aria-label="Learning tools"><button data-learn="start" aria-current="page">First turn</button><button data-learn="rules">Rules &amp; abilities</button><button data-learn="rolls">Dice practice</button><button data-learn="cards">Flashcards</button><button data-learn="quiz">Quiz</button></nav>
+            <section id="learn-start"><h2>Your first combat round</h2><p>Five short scenarios cover Mark, attacks, Focus and recovery.</p><div id="lessonCard" class="feature-card"></div></section>
+            <section id="learn-rules" hidden><label for="learnSearch">Find a rule or ability</label><input id="learnSearch" type="search" placeholder="Try charge, dying, or Mind Game"><label for="learnScope">Show</label><select id="learnScope"><option value="all">Everyone + your hero</option><option value="everyone">Everyone</option><option value="hero">Your hero</option></select><p id="ruleCount" role="status" class="small muted"></p><div id="ruleLibrary"></div></section>
+            <section id="learn-rolls" hidden><div id="dicePractice"></div></section>
+            <section id="learn-cards" hidden><div id="studyCards"></div></section>
+            <section id="learn-quiz" hidden><div id="knowledgeQuiz"></div></section>
           </section>
           <footer class="page-footer">
             An unofficial Draw Steel play companion. Draw Steel™ &amp; © MCDM
@@ -456,8 +432,7 @@
     <div id="notice" role="status" aria-live="polite"></div>
     <noscript
       ><p>
-        This companion needs JavaScript. The
-        <a href="index.html">full sheet</a> also contains readable rules.
+        Enable JavaScript to use the companion and its rules library.
       </p></noscript
     >
   </body>

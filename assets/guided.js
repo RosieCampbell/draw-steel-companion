@@ -13,7 +13,7 @@
     view = "play",
     phase = "rest",
     intent = "all",
-    timer;
+    timer, learning;
   function read(key) {
     try {
       return localStorage.getItem(key);
@@ -135,7 +135,7 @@
     focus:
       "Focus is your tactician resource. Start combat with Focus equal to your Victories; gain 2 at the start of your turn. Two separate events can each grant 1 more per round: damage to your Mark, and an ally within 10 using a heroic ability. Unspent Focus ends with the encounter.",
     surge:
-      "A surge can add 2 damage to one target of rolled damage for Aravinthaya. Spend up to 3 per hit. Two surges can instead raise a potency by 1; use the full reference and adjust manually for that option. Surges disappear at encounter end.",
+      "A surge can add 2 damage to one target of rolled damage for Aravinthaya. Spend up to 3 per hit. Two surges can instead raise a potency by 1; subtract two surges directly when you choose that option. Surges disappear at encounter end.",
     mark: "Mark is a maneuver targeting a creature within 10 squares. You and allies within your line of effect gain an edge on power rolls against it while the target is also within your line of effect. On qualifying rolled damage, spend 1 Focus for one Mark benefit.",
     edge: "One edge adds 2 to a power roll. Two edges raise the outcome by one tier instead. Banes work in reverse. Count up to two of each, then cancel them. Natural 19–20 is always tier 3.",
     recovery:
@@ -171,7 +171,7 @@
         "11 or less is tier 1; 12–16 is tier 2; 17+ is tier 3. Read the damage for that tier. The damage already includes your characteristic.",
     },
     {
-      title: "Stay in the conversation.",
+      title: "Track your Mark triggers.",
       text: "Your Patient Shot already damaged the Mark this round. An ally now damages it too. What happens?",
       options: [
         "Gain another Focus automatically",
@@ -200,14 +200,14 @@
     $("#modeNote").textContent =
       mode === "practice"
         ? "Try a round here. Practice never changes your saved hero."
-        : "Live hero · shares data with the full play sheet. Use one tracker at a time.";
+        : "Live hero · changes save in this browser.";
     $("#saveStatus").textContent =
       saveProblem ||
       (mode === "practice"
         ? "Practice saved separately."
         : "Hero saved in this browser.");
     $("#undo").disabled = !history.length;
-    $("#stamina").textContent = state.stam;
+    $("#stamina").value = state.stam;
     $("#maxStamina").textContent = k.max;
     $("#healthFill").style.width =
       (Math.max(0, state.stam) / k.max) * 100 + "%";
@@ -224,8 +224,8 @@
     $("#tempStamina").textContent = state.temp
       ? state.temp + " temporary Stamina · absorbs damage first"
       : "Winded at " + k.wind + " · Recovery value " + k.heal;
-    $("#focus").textContent = state.focus;
-    $("#surges").textContent = state.surge;
+    $("#focus").value = state.focus;
+    $("#surges").value = state.surge;
     $("#markName").textContent = state.mark || "No one yet";
     $("#conditionsList").replaceChildren();
     let conditions = Object.keys(state.conds);
@@ -233,7 +233,7 @@
       conditions.push("Bleeding");
     if (!conditions.length)
       $("#conditionsList").innerHTML =
-        '<p class="small muted">Nothing holding you back.</p>';
+        '<p class="small muted">No active conditions.</p>';
     for (const name of conditions) {
       const el = document.createElement("div");
       el.className = "condition-chip";
@@ -274,16 +274,16 @@
       phase === "turn"
         ? "What’s your next move?"
         : phase === "watch"
-          ? "Keep an eye on the field."
+          ? "Other turns"
           : state.guide.log.length
-            ? "Take a breath. Make a plan."
-            : "A good plan starts here.";
+            ? "Between encounters"
+            : "Before combat";
     $("#playIntro").textContent =
       phase === "turn"
-        ? "You bring the plan. Your friends bring it to life."
+        ? "Choose an action below. Your available actions and Focus are tracked here."
         : phase === "watch"
-          ? "Good tactics don’t stop when your turn ends."
-          : "You don’t need to know every rule. Just your next move.";
+          ? "Record your class triggers when their conditions are met."
+          : "Check your resources, recover, or start an encounter.";
     $("#victories").textContent = state.vict;
     $("#recoveries").textContent = state.rec;
     $("#recoveryValue").textContent = k.heal;
@@ -328,7 +328,7 @@
         article = document.createElement("article");
       article.className = "action-card" + (id === "mark" ? " featured" : "");
       article.innerHTML =
-        '<div class="meta">' +
+        '<span class="origin '+D.origin(id,state).scope+'">'+D.origin(id,state).label+'</span><div class="meta">' +
         a.type +
         " action · " +
         a.cost +
@@ -417,7 +417,15 @@
           '">+</button></div>',
       )
       .join("");
+    renderCampaign();
     renderLesson();
+    learning?.refresh();
+  }
+  function renderCampaign() {
+    const names={wealth:'Wealth',renown:'Renown',xp:'Experience'};
+    $('#campaignFields').innerHTML=Object.entries(names).map(([key,label])=>'<label>'+label+'<input type="number" min="0" step="1" data-set="'+key+'" value="'+state[key]+'"></label>').join('');
+    const schemas={projects:{n:'Project',p:'Progress',g:'Goal'},items:{n:'Consumable',c:'Quantity'},gear:{n:'Equipment',d:'Notes'}};
+    $('#campaignLists').innerHTML=Object.entries(schemas).map(([key,fields])=>'<section><h3>'+({projects:'Projects',items:'Consumables',gear:'Equipment'}[key])+'</h3>'+state[key].map((row,index)=>'<div class="campaign-row" data-list-row="'+key+'" data-index="'+index+'">'+Object.entries(fields).map(([f,label])=>'<label>'+label+'<input data-field="'+f+'" type="'+(typeof row[f]==='number'?'number':'text')+'" value="'+escapeText(String(row[f])).replaceAll('"','&quot;')+'"></label>').join('')+'<button data-list="'+key+'" data-operation="save">Save</button><button data-list="'+key+'" data-operation="remove">Remove</button></div>').join('')+'<button data-list="'+key+'" data-operation="add">Add '+({projects:'project',items:'consumable',gear:'equipment'}[key])+'</button></section>').join('');
   }
   function renderLesson() {
     const i = state.guide.lesson,
@@ -481,9 +489,10 @@
       '<details class="rule-detail"><summary>How it works</summary>' +
       detail(a.detail) +
       "</details>";
+    html = '<p class="origin">'+D.origin(id,state).label+'</p>'+html+window.GuidedLearning.mathBlock(state,id);
     if (id === "creative") {
       html += detail(
-        "Describe what you want to accomplish. Ask the Director for the action cost and roll. Record any resource changes in My Hero, or use the full play sheet.",
+        "Describe what you want to accomplish. Ask the Director for the action cost and roll. Record any resource changes in My Hero, and look up general actions in Learn.",
       );
       $("#actionBody").innerHTML = html;
       openDialog($("#actionDialog"));
@@ -605,7 +614,7 @@
       detail(
         next === "live"
           ? read(LIVE)
-            ? "This uses the same saved character as the full play sheet. Actions will update that hero. Your practice encounter stays separate. Use one tracker at a time."
+            ? "Actions will update your saved hero. Your practice encounter stays separate."
             : "There is no saved hero at this address yet. Live mode will start a fresh hero. To bring an existing session here, switch modes and restore its JSON backup under My Hero. Practice stays separate."
           : "Your live hero stays saved. You’ll return to your separate practice encounter.",
       ) +
@@ -625,33 +634,6 @@
       $("#utilityDialog").close();
       render();
     };
-  }
-  function healthDialog() {
-    utility(
-      "What happened?",
-      detail(
-        "Damage uses temporary Stamina first. Bleeding and other direct Stamina loss bypass it. A new temporary pool replaces the old one only if larger.",
-      ) +
-        '<label for="healthAmount">Amount</label><input id="healthAmount" type="number" min="1" max="9999" value="1" inputmode="numeric"><div class="button-row">' +
-        ["damage", "heal", "loss", "temp"]
-          .map(
-            (k, i) =>
-              '<button class="' +
-              (i === 0 ? "primary-button" : "secondary") +
-              '" data-health="' +
-              k +
-              '">' +
-              [
-                "Take damage",
-                "Heal",
-                "Direct Stamina loss",
-                "Gain temporary Stamina",
-              ][i] +
-              "</button>",
-          )
-          .join("") +
-        "</div>",
-    );
   }
   function conditionDialog() {
     utility(
@@ -726,7 +708,7 @@
       if (commit(event)) notice(state.guide.log[0]);
     };
   $("#endTurn").onclick = endTurn;
-  $("#healthOpen").onclick = healthDialog;
+
   $("#conditionOpen").onclick = conditionDialog;
   $("#switchMode").onclick = switchMode;
   $("#download").onclick = download;
@@ -771,11 +753,11 @@
   };
   $("#overwatch").onclick = () => {
     utility(
-      "Call the opening.",
+      "Overwatch · Your class",
       detail(
         "Confirm the moving creature is within 10 squares and line of effect. Choose an ally who can legally free-strike it during the movement. The ally resolves their own attack.",
       ) +
-        '<button id="confirmOverwatch" class="primary-button">Confirm · use triggered action</button><p class="small muted">Optional 1-Focus slow against Reason below 1: use the full reference and adjust Focus manually.</p>',
+        '<button id="confirmOverwatch" class="primary-button">Confirm · use triggered action</button><p class="small muted">Optional 1-Focus slow against Reason below 1: subtract 1 Focus directly if you choose that option.</p>',
     );
     $("#confirmOverwatch").onclick = () => {
       if (commit({ type: "overwatch" })) $("#utilityDialog").close();
@@ -783,7 +765,7 @@
   };
   $("#markPerk").onclick = () => {
     utility(
-      "Make the hit count.",
+      "Mark benefit · Your class",
       detail(
         "Confirm you or an ally dealt rolled damage to your Mark with an ability. Choose one benefit for that hit:",
       ) +
@@ -846,6 +828,9 @@
       );
       return;
     }
+    if (b.dataset.rule) { b.closest('dialog')?.close(); learning.open(b.dataset.rule); return; }
+    if (b.dataset.quickDamage || b.dataset.quickHeal) { commit({type:'health',kind:b.dataset.quickDamage?'damage':'heal',amount:Number(b.dataset.quickDamage||b.dataset.quickHeal)});return; }
+    if (b.dataset.list) {const parent=b.closest('[data-list-row]'),row={};parent?.querySelectorAll('[data-field]').forEach(i=>row[i.dataset.field]=i.type==='number'?Number(i.value):i.value);commit({type:'list',key:b.dataset.list,operation:b.dataset.operation,index:Number(parent?.dataset.index),row});return;}
     if (b.dataset.health) {
       if (
         commit({
@@ -916,5 +901,11 @@
       notice("Updated from the other tracker.");
     }
   });
+  document.addEventListener('change',e=>{
+    const key=e.target.dataset.set||({stamina:'stam',focus:'focus',surges:'surge'}[e.target.id]);
+    if(key){if(!commit({type:'set',key,value:e.target.value.trim()===''?NaN:Number(e.target.value)}))render();}
+  });
+  learning=window.GuidedLearning.mount({getState:()=>state,showLearn:()=>showView('learn')});
   render();
+  if(location.hash.startsWith('#learn'))learning.open(location.hash.split('/')[1]||'start');
 })();
