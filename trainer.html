@@ -478,10 +478,15 @@
   @media(prefers-reduced-motion:reduce){
     *{animation:none !important;scroll-behavior:auto !important;transition:none !important}
   }
+.play-link{padding:12px 20px;margin:0;background:#fff;font:14px system-ui;line-height:1.5}.play-link a{color:#1c3c58;font-weight:700}
+button:focus-visible,a:focus-visible,input:focus-visible,[role="button"]:focus-visible{outline:3px solid var(--steel);outline-offset:3px}
+.qspend,.smallbtn,.tab{min-height:44px}#tmPhase,#tmSave{font:13px system-ui;line-height:1.5}
+@media(max-width:480px){.markline input{min-width:0}.tm-grid{grid-template-columns:1fr!important}}
 </style>
 </head>
 <body>
 
+<p class="play-link"><a href="index.html">← Open play sheet for your live session</a> · Trainer examples use Shining Armor + Sniper.</p>
 <header class="mast">
   <div class="mast-inner">
     <p class="eyebrow">Interactive Trainer · Starter Rules</p>
@@ -533,7 +538,7 @@
     <p style="font-size:14.5px;color:var(--ink-soft);margin:0 0 24px"><b style="color:var(--ink)">Your two engines are Might and Reason.</b> Might powers your attacks; Reason sizes everything Mark does (your +4 bonus damage is <i>twice</i> your Reason). Lean on position and armor to cover the low Agility and Intuition.</p>
 
     <div class="vitals">
-      <div class="statbox"><div class="k">Stamina</div><div class="v">33</div><div class="h">Winded ≤16 · dying at −16</div></div>
+      <div class="statbox"><div class="k">Stamina</div><div class="v">33</div><div class="h">Winded ≤16 · dying ≤0 · dead at −16</div></div>
       <div class="statbox"><div class="k">Recoveries</div><div class="v">10</div><div class="h">Regain 11 each (⅓ of max)</div></div>
       <div class="statbox"><div class="k">Speed</div><div class="v">6</div><div class="h">Stability 1 · Disengage 2 · Size 1M</div></div>
       <div class="statbox"><div class="k">Potency</div><div class="v">0/1/2</div><div class="h">weak · average · strong</div></div>
@@ -546,7 +551,7 @@
       <div class="loop">
         <div class="loopstep"><div class="no"></div><div><h3>Earn Focus</h3><p>Gain <b>2 Focus</b> at the start of each of your turns. <b>+1</b> the first time each round <b>you or an ally</b> damage your Marked target, and <b>+1</b> the first time an ally within 10 squares uses a heroic ability. (At the start of combat, you also gain Focus equal to your Victories.)</p></div></div>
         <div class="loopstep"><div class="no"></div><div><h3>Mark a foe</h3><p>Spend a <b>maneuver</b> to Mark the scariest enemy. Now you <i>and your allies</i> get an <b>edge</b> on every roll against it, for the whole fight.</p></div></div>
-        <div class="loopstep"><div class="no"></div><div><h3>Cash in on hits</h3><p><b>Every time</b> you or an ally deals rolled damage to it — even on their turns — you can spend <b>1 Focus</b> for one of: <b>+4 damage</b>, a free <b>Recovery</b>, a free <b>2-square shift</b>, or — only when the melee hit was <b>your own</b> — a <b>taunt</b>. One benefit per hit.</p></div></div>
+        <div class="loopstep"><div class="no"></div><div><h3>Cash in on hits</h3><p><b>Every time</b> you or an ally deals rolled damage to it — even on their turns — you can spend <b>1 Focus</b> for one of: <b>+4 damage</b>, letting the attacker spend <b>one of their own Recoveries</b> without an action, a free <b>2-square shift</b>, or — only when the melee hit was <b>your own</b> — a <b>taunt</b>. One benefit per hit.</p></div></div>
         <div class="loopstep"><div class="no"></div><div><h3>Command the field</h3><p>Pour Focus into tempo: <b>Strike Now!</b> lets an ally act again, <b>Squad! Forward!</b> moves the team, <b>Overwatch</b> punishes movement, and <b>Mind Game</b> re-Marks while it wounds.</p></div></div>
       </div>
       <p class="helpnote"><b>You lose unspent Focus at the end of combat — so spend freely.</b> And thanks to <i>Useful Emotion</i>, you start every fight with a free surge already in the bank.</p>
@@ -606,19 +611,19 @@
         <div class="orow"><div><span class="on">Patient Shot</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob main">Main</span><span class="ob rng">R 15</span><span class="ob cost">Free</span></div></div><div class="oe"><b>5 / 8 / 15</b> damage by tier, <b>+2 more</b> if you don’t use your move action this turn — a careful, unhurried shot. <span class="orst">Bane if an enemy is adjacent to you: bows hate close quarters.</span></div></div>
         <div class="orow"><div><span class="on">Protective Attack</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob main">Main</span><span class="ob rng">M 1</span><span class="ob cost">Free</span></div></div><div class="oe"><b>7 / 10 / 13</b> damage, and the target is <b>taunted</b> until the end of its next turn — it takes a heavy penalty (double bane) if it attacks anyone but you. Your “hit me instead” button.</div></div>
         <div class="orow"><div><span class="on">Strike Now!</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob main">Main</span><span class="ob rng">R 10</span><span class="ob cost">Free / 5F</span></div></div><div class="oe">One ally <b>immediately makes their signature attack</b> — the basic class move every hero can always use for free — outside the normal turn order, at no cost to them. <b>5 Focus:</b> two allies. <span class="orst">Signature only — their big resource-spending moves don’t qualify.</span></div></div>
-        <div class="orow"><div><span class="on">Mind Game</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob main">Main</span><span class="ob rng">M 1 / R 15</span><span class="ob cost">5 Focus</span></div></div><div class="oe"><b>Marks the target</b> as part of the attack (no maneuver spent, your Mark moves onto them, and the attack itself gets the Mark’s edge), then <b>8 / 10 / 14</b> sword or <b>6 / 8 / 16</b> bow damage. If it isn’t clever, it’s <b>weakened</b> — a penalty on everything it rolls — until it saves. Until your next turn, the first ally to damage your Mark <b>heals a free Recovery</b>. <span class="orst">Heroic — needs 5 Focus banked. Bow mode: bane if an enemy is adjacent.</span></div></div>
+        <div class="orow"><div><span class="on">Mind Game</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob main">Main</span><span class="ob rng">M 1 / R 15</span><span class="ob cost">5 Focus</span></div></div><div class="oe"><b>Marks the target</b> as part of the attack (no maneuver spent, your Mark moves onto them, and the attack itself gets the Mark’s edge), then <b>8 / 10 / 14</b> sword or <b>6 / 8 / 16</b> bow damage. If it isn’t clever, it’s <b>weakened</b> — a penalty on everything it rolls — until it saves. Until your next turn, the first ally to damage your Mark <b>may spend one of their own Recoveries, no action required</b>. <span class="orst">Heroic — needs 5 Focus banked. Bow mode: bane if an enemy is adjacent.</span></div></div>
         <div class="orow"><div><span class="on">Melee Free Strike</span><div class="obadges"><span class="ob all">All heroes</span><span class="ob main">Main</span><span class="ob rng">M 1</span><span class="ob cost">Free</span></div></div><div class="oe">Your basic sword swing — the attack anyone can always make. <b>6 / 9 / 11</b> damage; pairs with Charge for a move-and-hit.</div></div>
         <div class="orow"><div><span class="on">Ranged Free Strike</span><div class="obadges"><span class="ob all">All heroes</span><span class="ob main">Main</span><span class="ob rng">R 15</span><span class="ob cost">Free</span></div></div><div class="oe">Your basic bow shot. <b>4 / 6 / 12</b> damage. <span class="orst">Bane if an enemy is within arm’s reach. Patient Shot is almost always better.</span></div></div>
         <div class="orow"><div><span class="on">Charge</span><div class="obadges"><span class="ob all">All heroes</span><span class="ob main">Main</span></div></div><div class="oe">Run up to your speed <b>in a straight line</b> and end with a sword swing, all one action. <span class="orst">No difficult terrain and no careful-stepping along the way.</span></div></div>
         <div class="orow"><div><span class="on">Defend</span><div class="obadges"><span class="ob all">All heroes</span><span class="ob main">Main</span></div></div><div class="oe">Hunker down: attacks against you take a <b>double bane</b> — a whole tier worse — until your next turn, and you get a double edge on rolls to resist environmental nastiness.</div></div>
-        <div class="orow"><div><span class="on">Heal</span><div class="obadges"><span class="ob all">All heroes</span><span class="ob main">Main</span><span class="ob rng">M 1</span></div></div><div class="oe">Medicine or a rallying word: an adjacent ally <b>heals using one of their own Recoveries</b>, or immediately rolls to <b>shake off one save-ends effect</b>. This is how you rescue a dying friend — they can’t heal themselves.</div></div>
+        <div class="orow"><div><span class="on">Heal</span><div class="obadges"><span class="ob all">All heroes</span><span class="ob main">Main</span><span class="ob rng">M 1</span></div></div><div class="oe">Medicine or a rallying word: an adjacent ally <b>heals using one of their own Recoveries</b>, or immediately rolls to <b>shake off one save-ends effect</b>. This is how you rescue a dying friend — they cannot Catch Breath in combat, but other healing still works.</div></div>
       </div>
 
       <div class="optsec">
         <h3>↻ My turn — maneuvers</h3>
-        <div class="orow"><div><span class="on">Mark</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob man">Maneuver</span><span class="ob rng">R 10</span><span class="ob cost">Free</span></div></div><div class="oe">Point at a foe: for the whole fight, <b>you and every ally who can see it roll better against it</b> (an edge). It also fuels your 1-Focus perks — see “NOT my turn” below. <span class="orst">One Mark at a time; it ends if you’re dying.</span></div></div>
+        <div class="orow"><div><span class="on">Mark</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob man">Maneuver</span><span class="ob rng">R 10</span><span class="ob cost">Free</span></div></div><div class="oe">Point at a foe: for the whole fight, <b>you and allies within your line of effect gain an edge against it while it is also within your line of effect</b> (an edge). It also fuels your 1-Focus perks — see “NOT my turn” below. <span class="orst">One Mark at a time; it ends if you’re dying.</span></div></div>
         <div class="orow"><div><span class="on">Squad! Forward!</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob man">Maneuver</span><span class="ob rng">R 10</span><span class="ob cost">3 Focus</span></div></div><div class="oe">You and two allies each <b>move up to their own speed</b>. Heroic ability.</div></div>
-        <div class="orow"><div><span class="on">Catch Breath</span><div class="obadges"><span class="ob all">All heroes</span><span class="ob man">Maneuver</span><span class="ob cost">1 Recovery</span></div></div><div class="oe">Regain <b>11 Stamina</b>. <span class="orst">Not while dying — someone must Heal you instead.</span></div></div>
+        <div class="orow"><div><span class="on">Catch Breath</span><div class="obadges"><span class="ob all">All heroes</span><span class="ob man">Maneuver</span><span class="ob cost">1 Recovery</span></div></div><div class="oe">Regain <b>11 Stamina</b>. <span class="orst">Not while dying in combat. You can spend Recoveries outside combat while dying.</span></div></div>
         <div class="orow"><div><span class="on">Aid Attack</span><div class="obadges"><span class="ob all">All heroes</span><span class="ob man">Maneuver</span><span class="ob rng">M 1</span></div></div><div class="oe">Pick an adjacent enemy: the next ally ability roll against it (before your next turn) gains an <b>edge</b>.</div></div>
         <div class="orow"><div><span class="on">Knockback</span><div class="obadges"><span class="ob all">All heroes</span><span class="ob man">Maneuver</span><span class="ob rng">M 1</span></div></div><div class="oe">Push <b>1 / 2 / 3</b> squares (Might roll). <span class="orst">Your Might 2 lets you shove up to size-2 creatures.</span></div></div>
         <div class="orow"><div><span class="on">Grab / Escape Grab / Stand Up</span><div class="obadges"><span class="ob all">All heroes</span><span class="ob man">Maneuver</span></div></div><div class="oe">Grab (Might roll, size ≤2 for you) · escape a grab (Might/Agility) · stand from prone (yours or an adjacent ally's).</div></div>
@@ -674,7 +679,7 @@
         <div class="orow"><div><span class="on">Expert Sage</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob pas">Perk</span></div></div><div class="oe">On tests for <b>crafting or research projects</b> using a lore skill: <b>roll twice, keep either</b>.</div></div>
         <div class="orow"><div><span class="on">Studied Commander</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob pas">Respite</span></div></div><div class="oe">With a day and a lead, make a <b>Reason test</b> to scout an upcoming encounter — learn numbers/levels; a great roll starts every enemy <b>surprised</b>. War &amp; battle lore research is cheaper for the party.</div></div>
         <div class="orow"><div><span class="on">Languages</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob pas">Known</span></div></div><div class="oe">Axiomatic · Caelian · Zaliac — and Systematic Mind lets you muddle through anything related.</div></div>
-        <div class="orow"><div><span class="on">Vitals</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob pas">Reference</span></div></div><div class="oe">M+2 A−1 R+2 I−1 P+2 · Stamina <b>33</b>, winded ≤<b>16</b>, dead −<b>16</b> · Speed 6 · Stability 1 · Size 1M · Wealth 1, Renown 0.</div></div>
+        <div class="orow"><div><span class="on">Vitals</span><div class="obadges"><span class="ob mine">Yours</span><span class="ob pas">Reference</span></div></div><div class="oe">M+2 A−1 R+2 I−1 P+2 · Stamina <b>33</b>, winded ≤<b>16</b>, dead −<b>16</b> · Speed 6 · Stability 1 · Size 1M · Wealth 1 at creation; track current Renown on the play sheet.</div></div>
       </div>
 
     </div>
@@ -699,7 +704,7 @@
         </div>
 
         <div id="abilToggles" class="toglist"></div>
-        <label class="tog"><input type="checkbox" id="abMark"> Target is <b>Marked</b> by me (edge on the roll)</label>
+        <label class="tog"><input type="checkbox" id="abMark"> Target is <b>Marked</b> by me (edge on the roll)</label><p id="markRollHint" class="helpnote"></p>
 
         <div class="chip-row" style="margin:16px 0 10px;align-items:center">
           <span class="steplabel">Surges</span>
@@ -796,7 +801,7 @@
     <div class="grid g3">
       <div class="card trig"><span class="when you">Your main action</span><h3>Strike Now!</h3><p class="meta">Ranged 10</p><p>An ally uses a <b>signature ability</b> right now, free. <b>Spend 5 Focus:</b> two allies.</p></div>
       <div class="card trig"><span class="when you">Your maneuver · 3 Focus</span><h3>Squad! Forward!</h3><p class="meta">Ranged 10</p><p>You and two allies each <b>move up to their own speed</b>. Reposition the whole team in one beat.</p></div>
-      <div class="card trig"><span class="when you">Your main action · 5 Focus</span><h3>Mind Game</h3><p class="meta">Melee 1 / Ranged 15</p><p>Strike + <b>free re-Mark</b> + <b>weakened</b>. Then the rider: before your next turn, the <b>first ally to damage your Mark spends a free Recovery</b> — remind them, it’s use-it-or-lose-it.</p></div>
+      <div class="card trig"><span class="when you">Your main action · 5 Focus</span><h3>Mind Game</h3><p class="meta">Melee 1 / Ranged 15</p><p>Strike + <b>free re-Mark</b> + <b>weakened</b>. Then the rider: before your next turn, the <b>first ally to damage your Mark may spend one of their own Recoveries, no action required</b> — remind them, it’s use-it-or-lose-it.</p></div>
       <div class="card trig"><span class="when you">Your maneuver</span><h3>Mark</h3><p class="meta">Ranged 10</p><p>If your Mark isn't up, re-apply it. Round one, every fight — it's your engine.</p></div>
     </div>
 
@@ -806,7 +811,7 @@
       <div class="card trig"><span class="when spend">Gone at end of combat</span><h3>Surges</h3><p>You <b>start every fight with 1</b> (Useful Emotion). On a damage roll, spend up to <b>3 for +2 damage each</b>, or <b>2 surges to raise a potency by 1</b>. Never hoard them.</p></div>
       <div class="card trig"><span class="when spend">Gone at end of combat</span><h3>Focus</h3><p>Gained 2 per turn plus your bonuses. It vanishes when the fight ends, so <b>pour it into Mark benefits and commands</b> rather than saving for a moment that never comes.</p></div>
       <div class="card trig"><span class="when you">Shared party pool</span><h3>Hero Tokens</h3><ul><li><b>1:</b> reroll a test (keep the new roll)</li><li><b>1:</b> turn a failed save into a success</li><li><b>1:</b> gain 2 surges</li><li><b>2:</b> regain Stamina = recovery value (no action)</li></ul></div>
-      <div class="card trig"><span class="when you">10 Recoveries</span><h3>Recoveries</h3><p><b>Catch Breath</b> (maneuver) spends one to heal <b>11</b>. Mark can also hand an ally a free Recovery, and Heal lets you give one to an adjacent ally.</p></div>
+      <div class="card trig"><span class="when you">10 Recoveries</span><h3>Recoveries</h3><p><b>Catch Breath</b> (maneuver) spends one to heal <b>11</b>. Mark and Heal can let an ally spend one of their own Recoveries; neither replenishes that resource.</p></div>
     </div>
 
     <div class="sectlabel" style="margin-top:36px"><span class="n">E</span><h2 style="font-size:22px">Two mechanics to know cold</h2></div>
@@ -867,22 +872,24 @@
         </div>
       </div>
     </div>
-    <p class="helpnote" style="border:none;padding-top:14px">Prefer a dedicated app? The same deck exists as an Anki import and an Obsidian Spaced Repetition file from earlier in our chat — those handle scheduling across devices.</p>
+    <p class="helpnote" style="border:none;padding-top:14px">Flashcard progress saves in this browser on this device. It does not sync between devices.</p>
   </section>
 
   <!-- ============ TABLE MODE ============ -->
   <section class="panel" id="tablemode" role="tabpanel">
     <div class="sectlabel"><span class="n">⬢</span><h2>Table Mode</h2></div>
     <div class="ruleline"></div>
-    <p class="lede">Keep this open <b>during the session</b>. It tracks Focus, surges, Stamina and your once-per-round triggers — the trainer's job is to remember so you can play. <span style="font-size:14px">(Resets if you refresh the page.)</span></p>
+    <p class="lede">Keep this open <b>during the session</b>. It tracks Focus, surges, Stamina and your once-per-round triggers. This practice tracker saves separately from the <a href="index.html">play sheet</a>; use the play sheet as your live-session record.</p>
 
     <div class="plate">
       <div class="tm-actions">
         <button class="smallbtn" id="tmStart">⚑ Start combat</button>
+        <button class="smallbtn" id="tmRound">New round</button>
         <button class="smallbtn" id="tmTurn">▶ My turn begins</button>
-        <button class="smallbtn" id="tmEnd">End combat</button>
+        <button class="smallbtn" id="tmEnd">End combat</button><button class="smallbtn" id="tmUndo" disabled>Undo</button>
         <span class="vict"><label for="tmVict">Victories</label><input id="tmVict" type="number" min="0" max="15" value="0"></span>
       </div>
+      <p id="tmPhase" role="status"></p><p id="tmSave" role="status"></p>
       <p class="hint" style="font-size:12.5px;color:var(--ink-soft);margin:0 0 16px"><b>After a fight:</b> End combat wipes Focus &amp; surges (as the rules do) — then spend Recoveries freely to heal to full, and bump the Victories box by 1 so your next Start combat gets the bigger opening Focus.</p>
 
       <div class="tm-grid">
@@ -928,7 +935,7 @@
         <button class="gainbtn" id="tmGainAlly">Ally heroic ability → +1 Focus</button>
         <button class="trigflag" id="tmTrig">Triggered action available</button>
       </div>
-      <p class="hint" style="font-size:12.5px;color:var(--ink-soft);text-align:center;margin:8px 0 0">These reset when you press <b>My turn begins</b>. The Mark-benefit <i>spend</i> (−1 above) has no round limit — every hit counts.</p>
+      <p class="hint" style="font-size:12.5px;color:var(--ink-soft);text-align:center;margin:8px 0 0">These reset when you press <b>New round</b>. My turn adds only 2 Focus. The Mark-benefit <i>spend</i> (−1 above) has no round limit — every hit counts.</p>
 
       <div class="markline">
         <label for="tmMark">Marked:</label>
@@ -955,19 +962,19 @@
           <div class="k">Recoveries</div>
           <div class="bignum" id="tmRec">10</div>
           <div class="tmrow"><button class="gainbtn" id="tmBreath" style="flex:1 1 auto">Catch Breath: −1, heal 11</button></div>
-          <div class="hint">Maneuver in combat, free outside it. Can't Catch Breath while dying — an ally must Heal you.</div>
+          <div class="hint">Maneuver in combat, free outside it. No Catch Breath while dying in combat; other healing still works. Spend Recoveries normally outside combat.</div>
         </div>
       </div>
     </div>
   
-    <div class="keynote" style="margin-top:20px"><b>After the fight — the ritual:</b> press <b>End combat</b> (Focus &amp; surges → 0) · spend Recoveries freely until Stamina is back to 33 (no action, no limit) · keep Victories marked — each one is <b>+1 starting Focus</b> next fight · shrug off lingering conditions you don’t want (only winded/dying persist) · Recoveries max and Victories→XP refresh only on a respite.</div>
+    <div class="keynote" style="margin-top:20px"><b>After the fight — the ritual:</b> press <b>End combat</b> (Focus &amp; surges → 0) · spend Recoveries freely until Stamina is back to 33 (no action, no limit) · keep Victories marked — each one is <b>+1 starting Focus</b> next fight · shrug off lingering conditions you don’t want (only winded, unconscious, and dying persist) · Recoveries max and Victories→XP refresh only on a respite.</div>
   </section>
 
   <!-- ============ POWER ROLL ============ -->
   <section class="panel" id="roll" role="tabpanel">
     <div class="sectlabel"><span class="n">01</span><h2>The Power Roll</h2></div>
     <div class="ruleline"></div>
-    <p class="lede">This is the engine of the whole game. Whenever an outcome is uncertain, you roll <b>2d10</b> and add a characteristic. The total lands in one of <b>three tiers</b> — there's no "miss." The question is never <i>whether</i> you do something, but <b>how much</b>. Play with it below.</p>
+    <p class="lede">Roll <b>2d10 + a characteristic</b> to find one of <b>three tiers</b>. Attack abilities usually deal damage even at tier 1. Tests can fail: use the Tests tab for their outcomes.</p>
 
     <div class="plate console">
       <div class="controls">
@@ -1262,9 +1269,18 @@ try{
   function selectTab(name){
     tabs.forEach(function(t){t.setAttribute('aria-selected', t.dataset.tab===name);});
     Object.keys(panels).forEach(function(k){panels[k].classList.toggle('active', k===name);});
-    window.scrollTo({top:0});
+    tabs.forEach(function(t){t.tabIndex=t.dataset.tab===name?0:-1;});
+    history.replaceState(null,'','#'+name);window.scrollTo({top:0});
   }
-  tabs.forEach(function(t){t.addEventListener('click',function(){selectTab(t.dataset.tab);});});
+  tabs.forEach(function(t,i){
+    t.id='tab-'+t.dataset.tab;t.setAttribute('aria-controls',t.dataset.tab);panels[t.dataset.tab].setAttribute('aria-labelledby',t.id);
+    t.addEventListener('click',function(){selectTab(t.dataset.tab);});
+    t.addEventListener('keydown',function(e){
+      var n=e.key==='ArrowRight'?(i+1)%tabs.length:e.key==='ArrowLeft'?(i+tabs.length-1)%tabs.length:e.key==='Home'?0:e.key==='End'?tabs.length-1:-1;
+      if(n>=0){e.preventDefault();selectTab(tabs[n].dataset.tab);tabs[n].focus();}
+    });
+  });
+  selectTab(panels[location.hash.slice(1)]?location.hash.slice(1):'char');
 
   /* ---------- Shared edge/bane resolver ----------
      returns {flat, tierShift, label} */
@@ -1408,13 +1424,13 @@ try{
   /* ================= CONDITIONS ================= */
   var conditions=[
     ['Bleeding','When you take a main or triggered action (or test/roll with Might or Agility), you lose 1d6 + your level Stamina afterward. Can\'t be prevented.'],
-    ['Dazed','You can do only one thing on your turn — a main action, a maneuver, or a move. No triggered actions or free maneuvers.'],
-    ['Frightened','Your rolls against the source take a bane; its rolls against you get an edge. You can\'t willingly move toward it.'],
-    ['Grabbed','Speed 0, can\'t be force-moved except by your grabber, and you take a bane on rolls that don\'t target them. Teleporting frees you.'],
+    ['Dazed','You can do only one thing on your turn — a main action, a maneuver, or a move. No triggered actions, including free triggered actions, or free maneuvers.'],
+    ['Frightened','Your ability rolls against the source take a bane; its ability rolls against you gain an edge. You can\'t willingly move toward it.'],
+    ['Grabbed','Speed 0, can\'t be force-moved except by your grabber, and you take a bane on abilities that don\'t target them. Teleporting frees you.'],
     ['Prone','Flat on the ground: your strikes take a bane, melee against you gets an edge. Crawling costs extra movement. Stand up with a maneuver.'],
-    ['Restrained','Speed 0, can\'t stand up, can\'t be force-moved. Bane on rolls and on Might/Agility tests; attacks against you get an edge.'],
+    ['Restrained','Speed 0, can\'t stand up, can\'t be force-moved. Bane on ability rolls and Might/Agility tests; abilities against you gain an edge. Teleporting ends restrained.'],
     ['Slowed','Your speed becomes 2 (unless already lower), and you can\'t shift.'],
-    ['Taunted','Double bane on any ability that doesn\'t target whoever taunted you, while you can see them.'],
+    ['Taunted','Double bane on any ability that doesn\'t target whoever taunted you, while you have line of effect to them.'],
     ['Weakened','You take a bane on all your power rolls.']
   ];
   var cg=$('#condGrid');
@@ -1424,7 +1440,8 @@ try{
     card.setAttribute('tabindex','0');
     card.setAttribute('role','button');
     card.innerHTML='<h3>'+c[0]+'<span class="tw">+</span></h3><div class="body">'+c[1]+'</div>';
-    function toggle(){card.classList.toggle('open');}
+    card.setAttribute('aria-expanded','false');
+    function toggle(){card.classList.toggle('open');card.setAttribute('aria-expanded',card.classList.contains('open'));}
     card.addEventListener('click',toggle);
     card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
     cg.appendChild(card);
@@ -1550,19 +1567,22 @@ try{
   /* ================= ABILITY ROLLER (Aravinthaya) ================= */
   var ABIL={
     patient:{n:'Patient Shot', d:{1:5,2:8,3:15}, eff:'',
-      tog:[{id:'nomove', t:'Took no move action this turn (<b>+2 damage</b>)', flat:2}]},
+      tog:[{id:'nomove', t:'Took no move action this turn (<b>+2 damage</b>)', flat:2},{id:'adj',t:'An enemy is adjacent to me (<b>bane</b>)',bane:1}]},
     protective:{n:'Protective Attack', d:{1:7,2:10,3:13}, eff:'Target is taunted by you (until end of its next turn).', tog:[]},
     meleefs:{n:'Melee Free Strike', d:{1:6,2:9,3:11}, eff:'', tog:[]},
     rangedfs:{n:'Ranged Free Strike', d:{1:4,2:6,3:12}, eff:'',
       tog:[{id:'adj', t:'An enemy is adjacent to me (<b>bane</b>)', bane:1}]},
-    mindm:{n:'Mind Game (melee)', d:{1:8,2:10,3:14}, eff:'Costs 5 Focus. Marks the target; weakened (save ends) if Reason < 0/1/2 by tier; first ally to hit your Mark before your next turn gets a free Recovery.', tog:[]},
-    mindr:{n:'Mind Game (ranged)', d:{1:6,2:8,3:16}, eff:'Costs 5 Focus. Marks the target; weakened (save ends) if Reason < 0/1/2 by tier; first ally to hit your Mark before your next turn gets a free Recovery.',
+    mindm:{n:'Mind Game (melee)', d:{1:8,2:10,3:14}, eff:'Costs 5 Focus. Marks the target; weakened (save ends) if Reason < 0/1/2 by tier; first ally to hit your Mark before your next turn may spend one of their own Recoveries, no action required.', tog:[]},
+    mindr:{n:'Mind Game (ranged)', d:{1:6,2:8,3:16}, eff:'Costs 5 Focus. Marks the target; weakened (save ends) if Reason < 0/1/2 by tier; first ally to hit your Mark before your next turn may spend one of their own Recoveries, no action required.',
       tog:[{id:'adj', t:'An enemy is adjacent to me (<b>bane</b>)', bane:1}]}
   };
   var curAbil='patient', abEdge=0, abBane=0, abSurge=0, abTog={};
 
   function renderTog(){
     var box=$('#abilToggles'); box.innerHTML=''; abTog={};
+    var autoMark=curAbil==='mindm'||curAbil==='mindr';
+    $('#abMark').disabled=autoMark;
+    $('#markRollHint').textContent=autoMark?'Mind Game marks before rolling: one Mark edge is included automatically.':'Mark edge requires the target and benefiting allies to be within your line of effect.';
     ABIL[curAbil].tog.forEach(function(t){
       var lab=d.createElement('label'); lab.className='tog';
       var cb=d.createElement('input'); cb.type='checkbox'; cb.dataset.tg=t.id;
@@ -1607,7 +1627,7 @@ try{
       var x=d10(), y=d10(), nat=x+y; a1.textContent=x; a2.textContent=y;
       a1.classList.remove('rolling'); a2.classList.remove('rolling');
       var ab=ABIL[curAbil];
-      var edges=abEdge + ($('#abMark').checked?1:0);
+      var edges=abEdge + ((curAbil==='mindm'||curAbil==='mindr'||$('#abMark').checked)?1:0);
       var banes=abBane + (abTog.adj?1:0);
       var r=resolveEB(edges,banes);
       var crit=(nat===19||nat===20);
@@ -1635,8 +1655,8 @@ try{
   var ABIL_CARDS=[
     ['Patient Shot','Signature \u00b7 Main action \u00b7 Ranged 15','A careful, unhurried bow shot. Roll 2d10+2: deal <b>5 / 8 / 15</b> damage by tier, <b>+2 more</b> if you don\u2019t use your move action this turn. <b>When:</b> you\u2019re standing somewhere good and see no reason to leave. Your bread and butter.'],
     ['Protective Attack','Signature \u00b7 Main action \u00b7 Melee 1','A sword strike that dares them to hit you back. <b>7 / 10 / 13</b> damage, and the target is <b>taunted</b> until the end of its next turn \u2014 a heavy penalty (double bane) if it attacks anyone but you. <b>When:</b> a monster is about to maul a squishy friend. Step in and make yourself the problem \u2014 your 33 Stamina and heavy armor can take it.'],
-    ['Mind Game','Heroic (5 Focus) \u00b7 Main action \u00b7 Melee 1 or Ranged 15','A strike that breaks their nerve. Three things happen at once: the target becomes your <b>Marked</b> foe (free \u2014 normally that costs your maneuver), you deal <b>8/10/14</b> sword or <b>6/8/16</b> bow damage, and if it isn\u2019t clever (low Reason) it\u2019s <b>weakened</b> \u2014 a penalty on everything it rolls until it shakes the effect. Bonus: before your next turn, the first ally to damage your Mark heals a free Recovery. <b>When:</b> a new biggest-threat appears mid-fight.'],
-    ['Mark','Field Arsenal \u00b7 Maneuver \u00b7 Ranged 10','Point at an enemy and declare it the priority. For the whole fight, <b>you and every ally who can see it roll better against it</b> (an edge). Then every time anyone damages it, you can pay <b>1 Focus</b> for a perk: +4 damage, the attacker heals, the attacker steps 2 squares safely, or \u2014 your own sword hit only \u2014 it\u2019s taunted. If it dies, point at a new victim instantly, free. <b>When:</b> first thing, every fight. This is your engine.'],
+    ['Mind Game','Heroic (5 Focus) \u00b7 Main action \u00b7 Melee 1 or Ranged 15','A strike that breaks their nerve. Three things happen at once: the target becomes your <b>Marked</b> foe (free \u2014 normally that costs your maneuver), you deal <b>8/10/14</b> sword or <b>6/8/16</b> bow damage, and if it isn\u2019t clever (low Reason) it\u2019s <b>weakened</b> \u2014 a penalty on everything it rolls until it shakes the effect. Bonus: before your next turn, the first ally to damage your Mark may spend one of their own Recoveries, no action required. <b>When:</b> a new biggest-threat appears mid-fight.'],
+    ['Mark','Field Arsenal \u00b7 Maneuver \u00b7 Ranged 10','Point at an enemy and declare it the priority. For the whole fight, <b>you and allies within your line of effect gain an edge against it while it is also within your line of effect</b> (an edge). Then every time anyone damages it, you can pay <b>1 Focus</b> for a perk: +4 damage, the attacker heals, the attacker steps 2 squares safely, or \u2014 your own sword hit only \u2014 it\u2019s taunted. If it dies, point at a new victim instantly, free. <b>When:</b> first thing, every fight. This is your engine.'],
     ['Strike Now!','Field Arsenal \u00b7 Main action \u00b7 Ranged 10','You bark an order and one ally <b>immediately makes their signature attack</b> \u2014 the basic class move every hero can use for free \u2014 outside the normal turn order, at no cost to them. <b>5 Focus:</b> two allies attack. <b>When:</b> your fury standing next to the Marked ogre is worth more than your own bow shot. Trading your action for a better one is the Mastermind\u2019s whole philosophy.'],
     ['Overwatch','Mastermind \u00b7 Triggered action \u00b7 Ranged 10','You watch a foe and call the counter. <b>The moment it moves</b>, one ally of your choice gets a free basic attack against it, mid-step. Pay <b>1 Focus:</b> if it isn\u2019t clever (Reason 0 or less), it\u2019s also <b>slowed</b> \u2014 speed 2 \u2014 until the end of its next turn. <b>When:</b> something rushes your back line. Uses your one triggered action for the round.'],
     ['Squad! Forward!','Heroic (3 Focus) \u00b7 Maneuver \u00b7 Ranged 10','One command: you and two allies <b>each immediately move up to your own speeds</b>. <b>When:</b> the whole team is in the wrong place \u2014 close the distance, retreat, or set up a surround in a single beat, without costing anyone their turn.'],
@@ -1648,7 +1668,8 @@ try{
     var card=d.createElement('div');
     card.className='card cond'; card.tabIndex=0; card.setAttribute('role','button');
     card.innerHTML='<h3>'+c[0]+'<span class="tw">+</span></h3><div class="body"><p style="font-family:\'Space Mono\';font-size:11.5px;letter-spacing:.02em;color:var(--steel);margin:0 0 8px;text-transform:uppercase">'+c[1]+'</p>'+c[2]+'</div>';
-    function tog(){card.classList.toggle('open');}
+    card.setAttribute('aria-expanded','false');
+    function tog(){card.classList.toggle('open');card.setAttribute('aria-expanded',card.classList.contains('open'));}
     card.addEventListener('click',tog);
     card.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();tog();}});
     ac.appendChild(card);
@@ -1671,11 +1692,11 @@ try{
     {s:'You haven\u2019t used your move action, and honestly? You like this spot.',
      q:'Best main action?',
      o:['Charge \u2014 close the distance','Patient Shot','Defend'],c:1,
-     e:'<b>Patient Shot:</b> 5/8/15 damage, <b>+2</b> for taking no move action, rolled with an <b>edge</b> from your Mark. Burn that Useful Emotion surge and it\u2019s +2 more.'},
+     e:'<b>Patient Shot:</b> 5/8/15 damage, <b>+2</b> for taking no move action, rolled with an <b>edge</b> from your Mark. This is the first damage to your Mark this round, so gain <b>+1 Focus</b>. Burn that Useful Emotion surge and it\u2019s +2 more.'},
     {s:'Now it\u2019s <b>Jorn\u2019s</b> turn. He charges your Marked amalgamite and deals 9 rolled damage with a melee strike.',
      q:'It\u2019s not your turn. What can you do right now?',
-     o:['Nothing \u2014 wait for my turn','Spend 1 Focus for a Mark benefit, and gain +1 Focus','Shout encouragement (no mechanical effect)'],c:1,
-     e:'Two things fire: <b>spend 1 Focus</b> (free triggered) for one benefit \u2014 +4 damage, Jorn spends a Recovery, Jorn shifts 2, (the taunt option needs <b>your own</b> melee hit \u2014 this was Jorn\u2019s, so it\u2019s off the menu) \u2014 and you <b>gain +1 Focus</b> (first Mark damage this round). The spend works on <i>every</i> hit; only the gain is once per round.'},
+     o:['Nothing \u2014 wait for my turn','Spend 1 Focus for a Mark benefit; no additional Focus gain','Shout encouragement (no mechanical effect)'],c:1,
+     e:'You can <b>spend 1 Focus</b> (free triggered) for one benefit \u2014 +4 damage, Jorn spends a Recovery, Jorn shifts 2, (the taunt option needs <b>your own</b> melee hit \u2014 this was Jorn\u2019s, so it\u2019s off the menu) \u2014 and you <b>do not gain another Focus</b>: Patient Shot already triggered the once-per-round gain. The spend works on <i>every</i> hit; only the gain is once per round.'},
     {s:'Enemy turn. A <b>crucibite</b> breaks toward Val \u2014 your squishy conduit \u2014 crossing open ground inside your Ranged 10.',
      q:'Your reaction?',
      o:['Overwatch \u2014 an ally free-strikes it mid-move','Opportunity attack','Nothing until my turn'],c:0,
@@ -1742,12 +1763,36 @@ try{
   renderD();
 
   /* ================= TABLE MODE ================= */
-  var TM={focus:0,surge:0,tok:0,rec:10,stam:33,markUsed:false,allyUsed:false,trigUsed:false};
+  var TM={focus:0,surge:0,tok:0,rec:10,stam:33,vict:0,mark:'',inCombat:false,round:0,turnTaken:false,markUsed:false,allyUsed:false,trigUsed:false};
+  var TM_KEY='ds-aravinthaya-table-v1', tmHistory=[], tmLoaded=false, tmCanSave=true;
+  var tmDefaults=JSON.parse(JSON.stringify(TM));
+  function tmSnapshot(){tmHistory.push(JSON.stringify(TM));if(tmHistory.length>40)tmHistory.shift();$('#tmUndo').disabled=false;}
+  // Capture before each table control mutates the tracker; inputs save on change below.
+  $('#tablemode').addEventListener('click',function(e){if(e.target.closest('button')&&e.target.closest('button').id!=='tmUndo')tmSnapshot();},true);
+  $('#tmUndo').addEventListener('click',function(){if(tmHistory.length){TM=JSON.parse(tmHistory.pop());tmRender();}$('#tmUndo').disabled=!tmHistory.length;});
+  function tmSave(){
+    if(!tmLoaded||!tmCanSave)return;
+    try{localStorage.setItem(TM_KEY,JSON.stringify(TM));$('#tmSave').textContent='Practice tracker saved in this browser · separate from the play sheet';}
+    catch(e){$('#tmSave').textContent='Not saved — keep a record before closing';}
+  }
+  try{
+    var tmRaw=localStorage.getItem(TM_KEY);
+    if(tmRaw){
+      var tmStored=JSON.parse(tmRaw);
+      if(!tmStored||typeof tmStored!=='object'||Array.isArray(tmStored))throw new Error('Invalid tracker');
+      Object.keys(tmDefaults).forEach(function(k){
+        var v=tmStored[k];if(v===undefined)return;
+        if(typeof v!==typeof tmDefaults[k]||(typeof v==='number'&&(!Number.isSafeInteger(v)||Math.abs(v)>1000000)))throw new Error('Invalid tracker');
+      });
+      Object.keys(tmDefaults).forEach(function(k){if(Object.prototype.hasOwnProperty.call(tmStored,k))TM[k]=tmStored[k];});
+    }
+  }catch(e){tmCanSave=false;$('#tmSave').textContent='Saved practice tracker unavailable. Existing data preserved; use the play sheet for your session.';}
+  tmLoaded=true;
   var STAM_MAX=33, WINDED=16, RECOVER=11;
   function clampTM(){
     TM.focus=Math.max(0,TM.focus); TM.surge=Math.max(0,TM.surge); TM.tok=Math.max(0,TM.tok);
     TM.rec=Math.max(0,Math.min(10,TM.rec));
-    TM.stam=Math.max(-WINDED,Math.min(STAM_MAX,TM.stam));
+    TM.stam=Math.max(-WINDED,Math.min(STAM_MAX,TM.stam));TM.vict=Math.max(0,TM.vict);
   }
   function tmRender(){
     clampTM();
@@ -1768,7 +1813,12 @@ try{
     ga.disabled=TM.allyUsed; ga.textContent=TM.allyUsed?'\u2713 Ally-heroic Focus taken (this round)':'Ally heroic ability \u2192 +1 Focus';
     tf.textContent=TM.trigUsed?'\u2713 Triggered action used (Overwatch)':'Triggered action available';
     tf.classList.toggle('done',TM.trigUsed);
-    $('#tmBreath').disabled = TM.rec<=0 || TM.stam<=0 || TM.stam>=STAM_MAX;
+    $('#tmBreath').textContent=(TM.inCombat?'Catch Breath':'Spend Recovery')+': −1, heal 11';
+    $('#tmVict').value=TM.vict;$('#tmMark').value=TM.mark;
+    $('#tmPhase').textContent=TM.inCombat?'Round '+TM.round+' · '+(TM.turnTaken?'My turn recorded':'My turn not yet recorded'):'Between combats';
+    $('#tmStart').disabled=TM.inCombat;$('#tmEnd').disabled=!TM.inCombat;$('#tmRound').disabled=!TM.inCombat;$('#tmTurn').disabled=!TM.inCombat||TM.turnTaken;
+    tmSave();
+    $('#tmBreath').disabled = TM.rec<=0 || TM.stam<=-WINDED || (TM.inCombat&&TM.stam<=0) || TM.stam>=STAM_MAX;
   }
   $$('[data-fadj]').forEach(function(b){ b.addEventListener('click',function(){ TM.focus+=+b.dataset.fadj; tmRender(); }); });
   $$('[data-sadj]').forEach(function(b){ b.addEventListener('click',function(){ TM.surge+=+b.dataset.sadj; tmRender(); }); });
@@ -1778,18 +1828,22 @@ try{
   $('#tmGainMark').addEventListener('click',function(){ if(!TM.markUsed){ TM.markUsed=true; TM.focus++; tmRender(); } });
   $('#tmGainAlly').addEventListener('click',function(){ if(!TM.allyUsed){ TM.allyUsed=true; TM.focus++; tmRender(); } });
   $('#tmTrig').addEventListener('click',function(){ TM.trigUsed=!TM.trigUsed; tmRender(); });
-  $('#tmBreath').addEventListener('click',function(){ if(TM.rec>0&&TM.stam>0){ TM.rec--; TM.stam+=RECOVER; tmRender(); } });
-  $('#tmMarkClear').addEventListener('click',function(){ $('#tmMark').value=''; });
+  $('#tmBreath').addEventListener('click',function(){ if(TM.rec>0&&TM.stam>-WINDED&&(!TM.inCombat||TM.stam>0)){ TM.rec--; TM.stam+=RECOVER; tmRender(); } });
+  $('#tmMarkClear').addEventListener('click',function(){ TM.mark='';tmRender(); });
   $('#tmStart').addEventListener('click',function(){
     var v=parseInt($('#tmVict').value,10)||0;
+    if(TM.inCombat)return;TM.inCombat=true;TM.round=1;TM.turnTaken=false;TM.mark='';
     TM.focus=v; TM.surge=1; TM.markUsed=false; TM.allyUsed=false; TM.trigUsed=false;
     tmRender();
   });
+  $('#tmMark').addEventListener('change',function(){tmSnapshot();TM.mark=this.value;tmRender();});
+  $('#tmVict').addEventListener('change',function(){var n=Number(this.value);if(Number.isSafeInteger(n)&&n>=0){tmSnapshot();TM.vict=n;}tmRender();});
+  $('#tmRound').addEventListener('click',function(){if(!TM.inCombat)return;TM.round++;TM.turnTaken=false;TM.markUsed=TM.allyUsed=TM.trigUsed=false;tmRender();});
   $('#tmTurn').addEventListener('click',function(){
-    TM.focus+=2; TM.markUsed=false; TM.allyUsed=false; TM.trigUsed=false;
+    if(!TM.inCombat||TM.turnTaken)return;TM.focus+=2;TM.turnTaken=true;
     tmRender();
   });
-  $('#tmEnd').addEventListener('click',function(){ TM.focus=0; TM.surge=0; tmRender(); });
+  $('#tmEnd').addEventListener('click',function(){ TM.inCombat=false;TM.round=0;TM.turnTaken=false;TM.mark='';TM.focus=0; TM.surge=0; tmRender(); });
   tmRender();
 
   /* ================= FLASHCARDS (Leitner) ================= */
@@ -1831,7 +1885,7 @@ try{
     ["Patient Shot's bonus condition?","+2 damage if you take no move action this turn (5/8/15 base \u2014 the 15 is Sniper's tier-3 +4).","char"],
     ["Which Memonek traits fire at combat start, and how?","Unphased: you can't be surprised. Useful Emotion: gain 1 free surge when any combat starts.","char"],
     ["What does I Am Law do?","Enemies can't move through your space unless you allow it \u2014 stand in the chokepoint.","char"],
-    ["Mind Game \u2014 cost, and what three things does it do?","5 Focus main action (M1 / R15): (1) Marks the target for free, (2) 8/10/14 melee or 6/8/16 ranged damage + weakened (save ends) vs Reason < 0/1/2, (3) until your next turn, the first ally to damage your Mark spends a free Recovery.","char"],
+    ["Mind Game \u2014 cost, and what three things does it do?","5 Focus main action (M1 / R15): (1) Marks the target for free, (2) 8/10/14 melee or 6/8/16 ranged damage + weakened (save ends) vs Reason < 0/1/2, (3) until your next turn, the first ally to damage your Mark may spend one of their own Recoveries, no action required.","char"],
     ["Combat just ended. What happens to your resources?","Focus and surges \u2192 0 (next fight STARTS with Focus = your Victories). Conditions on you end if you want \u2014 only winded, unconscious, and dying persist. Spend Recoveries freely to refill Stamina, no action needed. Surviving typically earns +1 Victory; a respite later converts Victories to XP and refreshes Recoveries.","char"]
   ];
   var FC_KEY='ds-aravinthaya-fc-v1';

@@ -1,0 +1,13 @@
+{
+  "name": "draw-steel-companion",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.cjs"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "jsdom": "^30.0.1"
+  }
+}
