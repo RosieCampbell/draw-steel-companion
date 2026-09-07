@@ -1135,3 +1135,6 @@ dialog .meta {
 .campaign-summary { grid-column: 1 / -1; min-width: 0; }
 .campaign-summary h4 { margin: 0 0 8px; font-size: 17px; }
 .campaign-summary p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; }
+
+.stamina-extras { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 14px; }
+.stamina-extras .text-button { font-size: 12px; text-align: left; }

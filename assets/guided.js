@@ -798,6 +798,15 @@
       }
       return;
     }
+    if (b.dataset.staminaExtra) {
+      const temporary = b.dataset.staminaExtra === 'temp';
+      utility(temporary ? 'Temporary Stamina' : 'Bleeding / direct Stamina loss',
+        detail(temporary
+          ? 'Only add this when an ability or effect grants temporary Stamina. It is a separate buffer, not healing. Your damage buttons use it first automatically. A new amount replaces the old buffer only if larger; the amounts do not add together.'
+          : 'Enter the Stamina loss specified by the effect. This bypasses temporary Stamina. For ordinary damage, use the minus buttons instead.') +
+        '<label for="healthAmount">' + (temporary ? 'Temporary Stamina granted' : 'Stamina lost') + '</label><input id="healthAmount" type="number" min="1" max="9999" value="1"><button class="primary-button" data-health="' + (temporary ? 'temp' : 'loss') + '">' + (temporary ? 'Apply temporary Stamina' : 'Record Stamina loss') + '</button>');
+      return;
+    }
     if (b.dataset.health) {
       if (
         commit({
