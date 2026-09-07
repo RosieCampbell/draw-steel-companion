@@ -650,6 +650,11 @@
         s.rec = 10;
         log(s, "Completed a 24-hour respite: Stamina and Recoveries restored; Victories converted to XP. Kits can now be changed.");
         break;
+      case "grantedRecovery":
+        if (s.rec < 1 || s.stam >= k.max || s.stam <= -k.wind) throw Error("You need a Recovery and missing Stamina; a Recovery cannot revive a dead hero.");
+        s.rec--; s.stam += k.heal;
+        log(s, "Ability-granted Recovery: spent 1 and regained up to " + k.heal + " Stamina.");
+        break;
       case "recovery":
         if (s.inCombat || s.rec < 1 || s.stam <= -k.wind || s.stam >= k.max)
           throw Error("Cannot spend a Recovery now.");

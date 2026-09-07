@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#f4f1e9" />
     <title>Aravinthaya · Draw Steel Field Guide</title>
     <link rel="stylesheet" href="assets/guided.css" />
-    <script defer src="assets/guided-engine.js?v=20260907-2"></script>
+    <script defer src="assets/guided-engine.js?v=20260907-3"></script>
     <script defer src="assets/guided-learning.js"></script>
-    <script defer src="assets/guided.js?v=20260907-2"></script>
+    <script defer src="assets/guided.js?v=20260907-3"></script>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 </head>
   <body>
@@ -89,6 +89,12 @@
             <div class="quick-controls" aria-label="Stamina shortcuts"><button data-quick-damage="5" aria-label="Take 5 damage">−5</button><button data-quick-damage="1" aria-label="Take 1 damage">−1</button><button data-quick-heal="1" aria-label="Heal 1 Stamina">+1</button><button data-quick-heal="5" aria-label="Heal 5 Stamina">+5</button></div>
             <div class="stamina-extras"><button class="text-button" data-stamina-extra="temp">Add temporary Stamina</button><button class="text-button" data-stamina-extra="loss">Record bleeding</button></div>
           </div>
+          <section class="rail-recoveries" aria-label="Recoveries">
+            <label for="railRecoveries">Recoveries remaining</label>
+            <div class="inline-counter"><button data-adjust="rec" data-delta="-1" aria-label="Decrease Recoveries">−</button><input id="railRecoveries" data-set="rec" type="number" min="0" max="10" aria-label="Recoveries remaining" class="editable-stat"><button data-adjust="rec" data-delta="1" aria-label="Increase Recoveries">+</button></div>
+            <p id="railRecoveryValue" class="small muted"></p>
+            <button id="grantedRecovery" class="text-button">Spend via an ability</button>
+          </section>
           <div class="resource-pair">
             <div>
               <span

@@ -180,6 +180,9 @@
       : "Winded at " + k.wind + " · Recovery value " + k.heal;
     $("#focus").value = state.focus;
     $("#surges").value = state.surge;
+    $('#railRecoveries').value = state.rec;
+    $('#railRecoveryValue').textContent = 'Each restores '+k.heal+' Stamina · maximum 10';
+    $('#grantedRecovery').disabled = state.rec < 1 || state.stam >= k.max || state.stam <= -k.wind;
     $("#markName").textContent = state.mark || "No one yet";
     $("#conditionsList").replaceChildren();
     let conditions = Object.keys(state.conds);
@@ -658,6 +661,10 @@
     $("#" + id).onclick = () => {
       if (commit(event)) notice(state.guide.log[0]);
     };
+  $('#grantedRecovery').onclick = () => {
+    utility('Spend a Recovery granted by an ability', detail('Use this when an ally’s ability or another effect lets you spend one of your Recoveries. This spends 1 Recovery and restores up to '+D.KITS[state.kit2].heal+' Stamina, without using your maneuver. It does not grant permission on its own.') + '<button id="confirmGrantedRecovery" class="primary-button">Spend 1 Recovery and heal</button>');
+    $('#confirmGrantedRecovery').onclick = () => {if(commit({type:'grantedRecovery'}))$('#utilityDialog').close();};
+  };
   $('#respite').onclick = () => {
     utility('Complete a respite', detail('Confirm that your hero has completed 24 uninterrupted hours of rest. This restores all Stamina and Recoveries and converts your '+state.vict+' Victories to XP. Ending a fight alone is not a respite. Resolve your respite activity and any lasting effects with the Director.') + '<button id="confirmRespite" class="primary-button">Record completed respite</button>');
     $('#confirmRespite').onclick = () => { if(commit({type:'respite'})){ $('#utilityDialog').close(); notice('Respite recorded. Change kits in My Hero if needed.'); } };

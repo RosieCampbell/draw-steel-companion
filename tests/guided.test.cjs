@@ -333,3 +333,8 @@ test('respite restores resources and converts Victories once, with confirmation 
  p.click('#respite');p.click('#confirmRespite');assert.equal(p.state(PRACTICE).xp,10);p.click('#undo');p.click('#undo');assert.equal(p.state(PRACTICE).stam,4);
  assert.throws(()=>D.apply(start(),{type:'respite'}));
 });
+test('an ally-granted Recovery heals during combat without spending the maneuver, including while dying',()=>{
+ let s=start();s.stam=-2;const before={...s.guide.used};s=D.apply(s,{type:'grantedRecovery'});
+ assert.equal(s.rec,9);assert.equal(s.stam,D.KITS[s.kit2].heal-2);assert.deepEqual(s.guide.used,before);
+ s.rec=0;assert.throws(()=>D.apply(s,{type:'grantedRecovery'}));
+});
