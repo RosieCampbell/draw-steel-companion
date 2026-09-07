@@ -386,9 +386,7 @@
               ><button id="saveNotes" class="secondary">Save notes</button>
             </div>
             <section class="plain-card"><h2>Campaign records</h2><p class="small muted">Edit a field, then click Save on that row. Changes can be undone.</p><div id="campaignFields"></div><div id="campaignLists"></div></section>
-            <details class="rule-detail">
-              <summary>Resource adjustments &amp; saved data</summary>
-              <div id="adjustments"></div>
+            <section class="plain-card" id="backupRestore"><h2>Upload a backup</h2><p>Choose your downloaded JSON backup. To restore your live hero, select “Use my saved hero” at the top first.</p>
               <label for="restoreFile"
                 >Restore a hero backup (applies to the current mode)</label
               ><input
@@ -396,6 +394,10 @@
                 type="file"
                 accept=".json,application/json"
               />
+            </section>
+            <details class="rule-detail">
+              <summary>Resource adjustments</summary>
+              <div id="adjustments"></div>
             </details>
           </section>
           <section id="learnView" hidden>
