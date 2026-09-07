@@ -30,6 +30,7 @@
     return mode === "live" ? LIVE : PRACTICE;
   }
   function load() {
+    editingRows.clear(); newRows.clear();
     lastRaw = read(key());
     try {
       state = lastRaw ? D.validate(JSON.parse(lastRaw)) : D.fresh();
@@ -248,6 +249,7 @@
       state.stam <= -k.wind;
     $("#recover").textContent = "Spend a Recovery · +" + k.heal;
     $("#victory").disabled = state.inCombat;
+    $("#respite").disabled = state.inCombat || state.stam <= -k.wind;
     $("#turnStartCard").hidden = state.inCombat && g.phase === "turn";
     $("#beginTurn").disabled = !state.inCombat || state.turnTaken;
     $("#watchBeginTurn").disabled = !state.inCombat || state.turnTaken;
@@ -346,8 +348,8 @@
     $("#kitSelect").value = state.kit2;
     $("#kitSelect").disabled = state.inCombat;
     $("#kitHelp").textContent = state.inCombat
-      ? "Locked during combat. End the encounter in Play; change kits only after a respite."
-      : "Available after a respite. Ending combat alone does not count as a respite.";
+      ? "Locked during combat. After a 24-hour respite, record it in Play before changing kits."
+      : "Change only after a completed respite. You can record the respite in Play; this selector relies on you to confirm the timing.";
     if (document.activeElement !== $("#notes")) $("#notes").value = g.notes;
     $("#adjustments").innerHTML = ["focus", "surge", "rec", "vict", "tok"]
       .map(
@@ -559,7 +561,7 @@
   function switchMode() {
     const next = mode === "practice" ? "live" : "practice";
     utility(
-      next === "live" ? "Bring your hero to the table." : "Return to practice?",
+      next === "live" ? "Use your saved hero?" : "Return to practice?",
       detail(
         next === "live"
           ? read(LIVE)
@@ -656,6 +658,10 @@
     $("#" + id).onclick = () => {
       if (commit(event)) notice(state.guide.log[0]);
     };
+  $('#respite').onclick = () => {
+    utility('Complete a respite', detail('Confirm that your hero has completed 24 uninterrupted hours of rest. This restores all Stamina and Recoveries and converts your '+state.vict+' Victories to XP. Ending a fight alone is not a respite. Resolve your respite activity and any lasting effects with the Director.') + '<button id="confirmRespite" class="primary-button">Record completed respite</button>');
+    $('#confirmRespite').onclick = () => { if(commit({type:'respite'})){ $('#utilityDialog').close(); notice('Respite recorded. Change kits in My Hero if needed.'); } };
+  };
   $("#endTurn").onclick = endTurn;
 
   $("#conditionOpen").onclick = conditionDialog;
@@ -736,6 +742,7 @@
       }
       history.push(JSON.stringify(state));
       state = next;
+      editingRows.clear(); newRows.clear();
       phase = state.guide.phase;
       saveProblem = "";
       saved();
@@ -794,7 +801,7 @@
         editingRows.clear(); newRows.clear();
         if (operation === 'add') { const added = key + ':' + (state[key].length - 1); editingRows.add(added); newRows.add(added); }
         renderCampaign();
-        if (operation === 'save') notice('Changes saved.');
+        if (operation === 'save') notice(saveProblem || 'Changes saved.');
       }
       return;
     }
@@ -808,14 +815,19 @@
       return;
     }
     if (b.dataset.health) {
+      const previousTemp = state.temp;
       if (
         commit({
           type: "health",
           kind: b.dataset.health,
           amount: Number($("#healthAmount").value),
         })
-      )
-        $("#utilityDialog").close();
+      ) {
+        $('#utilityDialog').close();
+        if(b.dataset.health === 'temp') notice(state.temp === previousTemp
+          ? 'Temporary Stamina stays at '+state.temp+'. Keep the higher amount; it does not add together.'
+          : 'Temporary Stamina is now '+state.temp+'.');
+      }
       return;
     }
     if (b.dataset.trade) {

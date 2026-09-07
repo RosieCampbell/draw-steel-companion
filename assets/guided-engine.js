@@ -256,7 +256,7 @@
         intent: "help",
         blurb: "Give an ally an immediate signature ability.",
         detail:
-          "One ally uses a signature ability as a free triggered action. They resolve their own roll. To use the 5-Focus upgrade for two allies, record this action and subtract 2 additional Focus directly.",
+          "One ally uses a signature ability as a free triggered action. They resolve their own roll. To use the 5-Focus upgrade for two allies, record this action and subtract 5 Focus directly.",
         target: true,
       },
       squad: {
@@ -277,7 +277,7 @@
         intent: "move",
         blurb: "Move to a better position.",
         detail:
-          "Base speed 6. Movement can be split around your other actions. Account for terrain and opportunity attacks. This prototype marks the move action used, not individual squares.",
+          "Base speed 6. Movement can be split around your other actions. Account for terrain and opportunity attacks. Record the move action once; track individual squares at the table.",
       },
       disengage: {
         name: "Disengage",
@@ -642,6 +642,14 @@
         log(s, event.kind + ": " + n + ".");
         break;
       }
+      case "respite":
+        if (s.inCombat || s.stam <= -k.wind) throw Error("Finish combat before recording a respite. A respite cannot revive a dead hero.");
+        s.xp += s.vict;
+        s.vict = 0;
+        s.stam = k.max;
+        s.rec = 10;
+        log(s, "Completed a 24-hour respite: Stamina and Recoveries restored; Victories converted to XP. Kits can now be changed.");
+        break;
       case "recovery":
         if (s.inCombat || s.rec < 1 || s.stam <= -k.wind || s.stam >= k.max)
           throw Error("Cannot spend a Recovery now.");

@@ -319,3 +319,17 @@ test('Learn is a searchable reference with separate character notes and no train
  search.value='zzzzzz';search.dispatchEvent(new p.w.Event('input'));
  assert.match(p.q('#ruleLibrary').textContent,/No matching rules/);
 });
+test('temporary Stamina reports non-stacking, absorbs damage, and bleeding bypasses it', async t => {
+ const p=await page(t); const initial=D.fresh().stam;
+ const grant=n=>{p.click('[data-stamina-extra="temp"]');p.q('#healthAmount').value=String(n);p.click('[data-health="temp"]');};
+ grant(5);assert.equal(p.state(PRACTICE).temp,5);grant(3);assert.equal(p.state(PRACTICE).temp,5);assert.match(p.q('#notice').textContent,/stays at 5/);
+ p.click('[data-quick-damage="1"]');assert.equal(p.state(PRACTICE).temp,4);assert.equal(p.state(PRACTICE).stam,initial);
+ p.click('[data-stamina-extra="loss"]');p.q('#healthAmount').value='2';p.click('[data-health="loss"]');assert.equal(p.state(PRACTICE).temp,4);assert.equal(p.state(PRACTICE).stam,initial-2);
+});
+test('respite restores resources and converts Victories once, with confirmation and undo',async t=>{
+ const s=D.fresh();s.stam=4;s.rec=2;s.vict=3;s.xp=7;
+ const p=await page(t,{[PRACTICE]:JSON.stringify(s)});p.click('#respite');assert.equal(p.state(PRACTICE).stam,4);p.click('#confirmRespite');
+ assert.equal(p.state(PRACTICE).stam,D.KITS[s.kit2].max);assert.equal(p.state(PRACTICE).rec,10);assert.equal(p.state(PRACTICE).xp,10);assert.equal(p.state(PRACTICE).vict,0);
+ p.click('#respite');p.click('#confirmRespite');assert.equal(p.state(PRACTICE).xp,10);p.click('#undo');p.click('#undo');assert.equal(p.state(PRACTICE).stam,4);
+ assert.throws(()=>D.apply(start(),{type:'respite'}));
+});

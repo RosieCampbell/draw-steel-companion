@@ -37,3 +37,11 @@ The browser-control connection reports no available browser despite the ambient 
 
 ## Reference-only Learn revision
 Learn now opens directly to a searchable, scope-filtered rules reference. Training scenarios, dice exercises, flashcards and quizzes have been removed from the guided interface. Entries use rulebook terminology, identify the source book and label condensed wording; character-specific explanations remain separate. General maneuvers and Charge have individual entries. Legacy learning metadata is preserved for compatibility. The current suite has 39 tests, including reference search and filtering.
+
+## Overall review follow-up
+
+Reviewed guided Play, My Hero and Learn, resource/action calculations, practice/live isolation, JSON data handling, and campaign editing. Cross-checked the supplied Starter Rules respite section and Heroes Tactician/kit ability entries.
+
+Fixed Strike Now!’s manual upgrade instruction (5 Focus, not 2), a stale lesson link, unclear temporary-Stamina feedback, and editing state carrying across character loads. Added explicit completed-respite recording: 24-hour confirmation, full Stamina/Recoveries, Victories converted to XP, and Undo. Kit selection remains available outside combat with an explicit timing reminder; it does not enforce a respite timestamp. Save notifications respect storage errors.
+
+Validation: 41 automated tests pass, including new UI coverage for temporary Stamina and completed respites. Browser discovery still returns “No browser is available.” Visual, touch and screen-reader verification remains outstanding. This is a reviewed companion reference, not a complete rules implementation: positioning, target legality, damage mitigation, saving throws, lasting effects, and respite activities still require table resolution. Strike Now!’s upgrade and Overwatch’s optional spend remain manual adjustments.
