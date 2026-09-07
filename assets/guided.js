@@ -437,9 +437,9 @@
       a.range +
       "</p>" +
       detail(a.blurb) +
-      '<details class="rule-detail" open><summary>How it works</summary>' +
+      '<section class="rule-detail"><h3>How it works</h3>' +
       detail(a.detail) +
-      "</details>";
+      "</section>";
     html = '<p class="origin">'+D.origin(id,state).label+'</p>'+html+window.GuidedLearning.mathBlock(state,id);
     if (id === "creative") {
       html += detail(
