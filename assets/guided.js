@@ -382,11 +382,12 @@
     learning?.refresh();
   }
   function renderCampaign() {
+    $('#savedChoices').textContent = 'Skills: '+state.characterChoices.skills.join(', ')+'. Languages: '+state.characterChoices.languages.join(', ')+'. Selected class abilities: '+state.characterChoices.abilities.join(', ')+'.';
     const names={wealth:'Wealth',renown:'Renown',xp:'Experience',projectPoints:'Unspent project points'};
     $('#campaignFields').innerHTML=Object.entries(names).map(([key,label])=>'<label>'+label+'<input type="number" min="0" step="1" data-set="'+key+'" value="'+state[key]+'"></label>').join('');
     const schemas = {
-      projects: {n: 'Project name', p: 'Progress', g: 'Goal'},
-      items: {n: 'Consumable name', c: 'Quantity'},
+      projects: {n: 'Project name', p: 'Progress (manual correction)', g: 'Goal', status: 'Status', d: 'Notes, materials and requirements'},
+      items: {n: 'Consumable name', c: 'Quantity', d: 'Description / effect'},
       gear: {n: 'Equipment name', d: 'Notes'}
     };
     const titles = {projects: 'Projects', items: 'Consumables', gear: 'Equipment'};
@@ -396,15 +397,15 @@
         '<div class="campaign-row" data-list-row="' + key + '" data-index="' + index + '">' +
         (editingRows.has(key + ':' + index) ? Object.entries(fields).map(([field, label]) => {
           const value = escapeText(String(row[field]));
-          const control = field === 'd'
+          const control = field === 'status' ? '<select data-field="status">'+['planned','active','completed'].map(v=>'<option '+(row.status===v?'selected':'')+'>'+v+'</option>').join('')+'</select>' : field === 'd'
             ? '<textarea data-field="d" rows="3">' + value + '</textarea>'
             : '<input data-field="' + field + '" type="' + (typeof row[field] === 'number' ? 'number' : 'text') + '" value="' + value.replaceAll('"', '&quot;') + '">';
           return '<label class="campaign-field field-' + field + '">' + label + control + '</label>';
         }).join('') +
         '<div class="campaign-actions"><button data-list="' + key + '" data-operation="save">Save changes</button><button data-list="' + key + '" data-operation="cancel">Cancel</button></div>' :
         '<div class="campaign-summary"><h4>' + escapeText(row.n || 'Unnamed ' + singular[key]) + '</h4>' +
-        (key === 'gear' ? '<p>' + escapeText(row.d || 'No notes.') + '</p>' : '<p>' + (key === 'projects' ? 'Progress: ' + row.p + ' / ' + row.g : 'Quantity: ' + row.c) + '</p>') +
-        '</div><div class="campaign-actions"><button data-list="' + key + '" data-operation="edit">Edit</button><button data-list="' + key + '" data-operation="remove">Remove</button></div>') + '</div>'
+        (key === 'gear' ? '<p>' + escapeText(row.d || 'No notes.') + '</p>' : '<p>' + (key === 'projects' ? 'Progress: ' + row.p + ' / ' + row.g + ' · '+escapeText(row.status) : 'Quantity: ' + row.c) + '</p><p>'+escapeText(row.d || '')+'</p>') +
+        '</div><div class="campaign-actions">'+(key==='projects'?'<button data-allocate="'+index+'">Spend project points</button>':'')+'<button data-list="' + key + '" data-operation="edit">Edit</button><button data-list="' + key + '" data-operation="remove">Remove</button></div>') + '</div>'
       ).join('') + '<button data-list="' + key + '" data-operation="add">Add ' + singular[key] + '</button></section>'
     ).join('');
   }
@@ -613,7 +614,7 @@
   }
   function download() {
     const url = URL.createObjectURL(
-      new Blob([JSON.stringify(state, null, 2)], { type: "application/json" }),
+      new Blob([JSON.stringify({...state,backupVersion:1,exportedAt:new Date().toISOString()}, null, 2)], { type: "application/json" }),
     );
     const a = document.createElement("a");
     a.href = url;
@@ -795,6 +796,11 @@
     }
     if (b.dataset.rule) { b.closest('dialog')?.close(); learning.open(b.dataset.rule); return; }
     if (b.dataset.quickDamage || b.dataset.quickHeal) { commit({type:'health',kind:b.dataset.quickDamage?'damage':'heal',amount:Number(b.dataset.quickDamage||b.dataset.quickHeal)});return; }
+    if (b.dataset.allocate !== undefined) {
+      const index=Number(b.dataset.allocate), project=state.projects[index];
+      utility('Spend project points',detail('Allocate points to '+project.n+'. This subtracts from your unspent balance and adds to this project’s progress together. Confirm any project requirements with your Director. You have '+state.projectPoints+' points available.')+'<label for="allocateAmount">Points to spend</label><input id="allocateAmount" type="number" min="1" value="1"><button id="confirmAllocation" class="primary-button">Allocate points</button>');
+      $('#confirmAllocation').onclick=()=>{if(commit({type:'allocateProject',index,amount:Number($('#allocateAmount').value)}))$('#utilityDialog').close();};return;
+    }
     if (b.dataset.list) {
       const key = b.dataset.list, operation = b.dataset.operation;
       const parent = b.closest('[data-list-row]'), index = Number(parent?.dataset.index);

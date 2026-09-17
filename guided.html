@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#f4f1e9" />
     <title>Aravinthaya · Draw Steel Field Guide</title>
     <link rel="stylesheet" href="assets/guided.css" />
-    <script defer src="assets/guided-engine.js?v=20260916-project-points"></script>
+    <script defer src="assets/guided-engine.js?v=20260916-backups"></script>
     <script defer src="assets/guided-learning.js"></script>
-    <script defer src="assets/guided.js?v=20260916-project-points"></script>
+    <script defer src="assets/guided.js?v=20260916-backups"></script>
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 </head>
   <body>
@@ -392,8 +392,8 @@
               ></textarea
               ><button id="saveNotes" class="secondary">Save notes</button>
             </div>
-            <section class="plain-card"><h2>Campaign records</h2><p class="small muted">Balances save when you leave the field. For projects and equipment, use Save changes. Changes can be undone.</p><div id="campaignFields"></div><div id="campaignLists"></div></section>
-            <section class="plain-card" id="backupRestore"><h2>Upload a backup</h2><p>Choose your downloaded JSON backup. To restore your live hero, select “Use my saved hero” at the top first.</p>
+            <section class="plain-card"><h2>Campaign records</h2><p>Use “Spend project points” to move points from your unspent balance into a project. Editing progress directly is a correction and does not spend points.</p><p class="small muted">Balances save when you leave the field. For projects and equipment, use Save changes. Changes can be undone.</p><div id="campaignFields"></div><div id="campaignLists"></div></section>
+            <section class="plain-card"><h2>Character choices in your backup</h2><p id="savedChoices"></p><p class="small muted">Recorded character choices are preserved in backups. Combat calculations still use this companion’s supported Aravinthaya build.</p></section><section class="plain-card" id="backupRestore"><h2>Upload a backup</h2><p>Choose your downloaded JSON backup. To restore your live hero, select “Use my saved hero” at the top first.</p>
               <label for="restoreFile"
                 >Restore a hero backup (applies to the current mode)</label
               ><input

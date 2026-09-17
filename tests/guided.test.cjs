@@ -114,7 +114,7 @@ test("legacy backup migration preserves inventory and data; corrupt inputs are r
   old.projects = [{ n: "A map", p: 12, g: 30 }];
   old.stam = 20;
   const s = D.validate(old);
-  assert.deepEqual(s.projects, old.projects);
+  assert.deepEqual(s.projects, old.projects.map(row=>({...row,d:"",status:"active"})));
   assert.equal(s.stam, 20);
   assert.equal(s.guide.phase, "rest");
   for (const bad of [
@@ -249,7 +249,7 @@ test("live mode requires explicit confirmation and preserves existing campaign d
   assert.equal(p.q("#stamina").value, "15");
   p.click("#start");
   assert.equal(p.state(LIVE).focus, 4);
-  assert.deepEqual(p.state(LIVE).projects, s.projects);
+  assert.deepEqual(p.state(LIVE).projects, s.projects.map(row=>({...row,d:"",status:"active"})));
   assert.equal(p.w.localStorage.getItem(PRACTICE), null);
 });
 test("conflicting live updates are loaded without overwriting another tracker", async (t) => {
@@ -368,4 +368,24 @@ test('project points migrate to 195, preserve zero and edited balances through J
  const restored=await page(t,{'ds-guided-mode':'live'});
  Object.defineProperty(restored.q('#restoreFile'),'files',{configurable:true,value:[{text:async()=>raw}]});await restored.q('#restoreFile').onchange();
  assert.equal(restored.q('[data-set="projectPoints"]').value,'175');assert.equal(restored.state(LIVE).projectPoints,175);
+});
+test('project spending transfers points atomically, completes a project and rejects overspending',()=>{
+ let s=D.fresh();s.projects=[{n:'Potion',p:10,g:30,d:'Needs herbs',status:'active'}];
+ s=D.apply(s,{type:'allocateProject',index:0,amount:20});assert.equal(s.projectPoints,175);assert.equal(s.projects[0].p,30);assert.equal(s.projects[0].status,'completed');
+ assert.throws(()=>D.apply(s,{type:'allocateProject',index:0,amount:1}));assert.equal(s.projectPoints,175);
+ const restored=D.validate(JSON.parse(JSON.stringify(s)));assert.deepEqual(restored.projects,s.projects);
+ assert.throws(()=>D.validate({...s,backupVersion:99}));
+});
+test('UI project allocation updates both balances and Undo restores both',async t=>{
+ const s=D.fresh();s.projects=[{n:'Potion',p:0,g:30,status:'planned',d:'Herbs required'}];
+ const p=await page(t,{[PRACTICE]:JSON.stringify(s)});p.click('[data-view="hero"]');p.click('[data-allocate="0"]');p.q('#allocateAmount').value='20';p.click('#confirmAllocation');
+ assert.equal(p.state().projectPoints,175);assert.equal(p.state().projects[0].p,20);p.click('#undo');assert.equal(p.state().projectPoints,195);assert.equal(p.state().projects[0].p,0);
+});
+test('downloaded JSON contains metadata, consumable descriptions and character choices and restores them',async t=>{
+ const s=D.fresh();s.items=[{n:'Potion',c:2,d:'Restore Stamina'}];s.characterChoices.skills=['Strategy'];
+ const p=await page(t,{[PRACTICE]:JSON.stringify(s)});let blob;
+ p.w.URL.createObjectURL=b=>{blob=b;return 'blob:test';};p.w.HTMLAnchorElement.prototype.click=function(){};
+ p.click('#download');const raw=await new Promise((resolve,reject)=>{const r=new p.w.FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsText(blob);});
+ const backup=JSON.parse(raw);assert.equal(backup.backupVersion,1);assert.ok(Number.isFinite(Date.parse(backup.exportedAt)));assert.equal(backup.items[0].d,'Restore Stamina');assert.deepEqual(backup.characterChoices.skills,['Strategy']);assert.equal(backup.projectPoints,195);
+ const restored=D.validate(backup);assert.deepEqual(restored.items,s.items);assert.deepEqual(restored.characterChoices,s.characterChoices);
 });

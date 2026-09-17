@@ -56,6 +56,7 @@
       renown: 1,
       xp: 0,
       projectPoints: 195,
+      characterChoices: {skills:['Strategy','Society','Timescape','Rumors','Lead','Flirt','Navigate','Gymnastics','Alertness'],languages:['Axiomatic','Caelian','Zaliac'],abilities:['Mark','Strike Now!','Overwatch','Squad! Forward!','Mind Game'],ancestry:'Memonek',career:'Sage',subclass:'Mastermind'},
       conds: {},
       projects: [],
       items: [],
@@ -92,6 +93,7 @@
       !Number.isSafeInteger(raw.rec)
     )
       throw Error("This is not a character backup.");
+    if (raw.backupVersion !== undefined && raw.backupVersion !== 1) throw Error('Unsupported backup version.');
     const s = fresh();
     for (const key of Object.keys(s)) {
       if (!(key in raw) || key === "guide") continue;
@@ -111,6 +113,10 @@
         throw Error("Invalid character text.");
       s[key] = clone(value);
     }
+    const choices=s.characterChoices;
+    if(!choices || typeof choices!=='object' || Array.isArray(choices))throw Error('Invalid character choices.');
+    for(const key of ['skills','languages','abilities']) if(!Array.isArray(choices[key])||choices[key].length>100||choices[key].some(v=>typeof v!=='string'||v.length>200))throw Error('Invalid character choices.');
+    for(const key of ['ancestry','career','subclass'])if(typeof choices[key]!=='string'||choices[key].length>200)throw Error('Invalid character choices.');
     if (!Object.hasOwn(KITS, s.kit2)) throw Error("Unknown kit.");
     if (
       !s.conds ||
@@ -132,6 +138,14 @@
       for (const row of s[key]) {
         if (!row || typeof row !== "object")
           throw Error("Invalid inventory row.");
+        if(key === 'projects' || key === 'items') {
+          if(row.d === undefined)row.d='';
+          if(typeof row.d!=='string'||row.d.length>20000)throw Error('Invalid item notes.');
+        }
+        if(key === 'projects') {
+          if(row.status === undefined)row.status=row.g>0&&row.p>=row.g?'completed':'active';
+          if(!['planned','active','completed'].includes(row.status))throw Error('Invalid project status.');
+        }
         for (const k of texts)
           if (typeof row[k] !== "string" || row[k].length > 20000)
             throw Error("Invalid inventory text.");
@@ -705,13 +719,20 @@
         if(!limit||!Number.isSafeInteger(event.value)||event.value<limit[0]||event.value>limit[1])throw Error('Enter a whole number between '+(limit?limit.join(' and '):'the allowed limits')+'.');
         s[event.key]=event.value;log(s,'Set '+event.key+' to '+event.value+'.');break;
       }
+      case 'allocateProject': {
+        const project=s.projects[event.index], amount=event.amount;
+        if(!Number.isInteger(event.index)||!project||!Number.isSafeInteger(amount)||amount<=0||amount>s.projectPoints)throw Error('Enter an amount within your unspent project points.');
+        if(project.g<=0||amount>project.g-project.p||project.status==='completed')throw Error('Set a project goal and allocate no more than its remaining points.');
+        project.p+=amount;s.projectPoints-=amount;project.status=project.p>=project.g?'completed':'active';
+        log(s,'Allocated '+amount+' project points to '+project.n+'.');break;
+      }
       case "list": {
-        const schemas={projects:{n:'text',p:'number',g:'number'},items:{n:'text',c:'number'},gear:{n:'text',d:'text'}};
+        const schemas={projects:{n:'text',p:'number',g:'number',d:'text',status:'text'},items:{n:'text',c:'number',d:'text'},gear:{n:'text',d:'text'}};
         const schema=schemas[event.key];if(!schema)throw Error('Unknown list.');
-        if(event.operation==='add'){if(s[event.key].length>=500)throw Error('List is full.');s[event.key].push(Object.fromEntries(Object.entries(schema).map(([k,type])=>[k,type==='text'?'':0])));}
+        if(event.operation==='add'){if(s[event.key].length>=500)throw Error('List is full.');s[event.key].push(Object.fromEntries(Object.entries(schema).map(([k,type])=>[k,k==='status'?'planned':type==='text'?'':0])));}
         else {if(!Number.isInteger(event.index)||!s[event.key][event.index])throw Error('Unknown row.');
           if(event.operation==='remove')s[event.key].splice(event.index,1);
-          else if(event.operation==='save'){const row={};for(const [key,type] of Object.entries(schema)){const value=event.row[key];if(type==='text'&&(typeof value!=='string'||value.length>20000))throw Error('Invalid text.');if(type==='number'&&(!Number.isSafeInteger(value)||value<0||value>1000000))throw Error('Use a nonnegative whole number.');row[key]=value;}s[event.key][event.index]=row;}
+          else if(event.operation==='save'){const row={};for(const [key,type] of Object.entries(schema)){const value=event.row[key] ?? (key==='d'?'':key==='status'?'active':undefined);if(key==='status'&&!['planned','active','completed'].includes(value))throw Error('Invalid project status.');if(type==='text'&&(typeof value!=='string'||value.length>20000))throw Error('Invalid text.');if(type==='number'&&(!Number.isSafeInteger(value)||value<0||value>1000000))throw Error('Use a nonnegative whole number.');row[key]=value;}s[event.key][event.index]=row;}
           else throw Error('Unknown list operation.');
         }
         log(s,'Updated '+event.key+'.');break;
