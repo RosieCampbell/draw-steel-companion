@@ -281,7 +281,7 @@ test('direct counters apply damage through temporary Stamina and support editing
  input.value='-1';input.dispatchEvent(new p.w.Event('change',{bubbles:true}));assert.equal(p.state(PRACTICE).focus,0);assert.equal(input.value,'0');
 });
 test('damage breakdown matches actual unmodified ability damage for both kits and weapons',()=>{
- for(const kit of ['shining','mountain'])for(const id of ['patient','melee','mind'])for(const ranged of [false,true]){
+ for(const kit of ['shining','mountain','panther'])for(const id of ['patient','melee','mind'])for(const ranged of [false,true]){
  const s=start();s.kit2=kit;const b=D.breakdown(s,id,ranged);for(const [i,dice] of [[0,[1,1]],[1,[6,6]],[2,[10,10]]]){const r=D.rollResult(s,id,{...options,d1:dice[0],d2:dice[1],markEffect:false,ranged});assert.equal(r.damage,b.base[i]+b.stat[i]+b.kit[i]+b.treasure[i],kit+' '+id+' '+i);}
  }
 });
@@ -337,4 +337,22 @@ test('an ally-granted Recovery heals during combat without spending the maneuver
  let s=start();s.stam=-2;const before={...s.guide.used};s=D.apply(s,{type:'grantedRecovery'});
  assert.equal(s.rec,9);assert.equal(s.stam,D.KITS[s.kit2].heal-2);assert.deepEqual(s.guide.used,before);
  s.rec=0;assert.throws(()=>D.apply(s,{type:'grantedRecovery'}));
+});
+test('file restore preserves low Recoveries in the sidebar, saved state and subsequent reload',async t=>{
+ const p=await page(t);const backup=D.fresh();backup.rec=2;backup.stam=15;
+ Object.defineProperty(p.q('#restoreFile'),'files',{configurable:true,value:[{text:async()=>JSON.stringify(backup)}]});
+ await p.q('#restoreFile').onchange();
+ assert.equal(p.q('#railRecoveries').value,'2');assert.equal(p.q('#recoveries').textContent,'2');assert.equal(p.state(PRACTICE).rec,2);
+ const reload=await page(t,{[PRACTICE]:JSON.stringify(p.state(PRACTICE))});assert.equal(reload.q('#railRecoveries').value,'2');
+});
+
+test('Panther uses its own stats and Devastating Rush, preserves action budget and respects movement restrictions',()=>{
+ let s=D.apply(D.fresh(),{type:'kit',kit:'panther'});
+ assert.equal(s.stam,27);assert.equal(D.KITS.panther.heal,9);assert.equal(D.KITS.panther.stability,1);
+ s=D.apply(D.apply(s,{type:'start'}),{type:'turn'});
+ assert.equal(D.abilities(s).melee.name,'Devastating Rush');
+ assert.equal(D.rollResult(s,'melee',{...options,rush:3}).damage,9);
+ s=D.apply(s,{type:'record',id:'melee',options:{...options,rush:3}});assert.equal(s.guide.used.move,false);
+ assert.equal(D.validate(JSON.parse(JSON.stringify(s))).kit2,'panther');
+ s.conds.Grabbed='save';assert.throws(()=>D.rollResult(s,'melee',{...options,rush:1}));
 });

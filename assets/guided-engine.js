@@ -14,6 +14,7 @@
       free: [6, 9, 11],
       mind: [8, 10, 14],
     },
+    panther: {name:"Panther", max:27, wind:13, heal:9, stability:1, free:[5,8,14], mind:[7,9,17]},
     mountain: {
       name: "Mountain",
       max: 30,
@@ -60,7 +61,7 @@
       gear: [
         {
           n: "Heelcutter",
-          d: "Campaign heavy weapon; +1 damage included in Mountain numbers.",
+          d: "Campaign heavy weapon; +1 rolled damage when wielded with a heavy-weapon kit, such as Panther or Mountain.",
         },
       ],
       kit2: "shining",
@@ -137,6 +138,10 @@
           if (!Number.isSafeInteger(row[k]) || row[k] < 0)
             throw Error("Invalid inventory number.");
       }
+    }
+    for (const item of s.gear) {
+      if (item.n === 'Heelcutter' && item.d === 'Campaign heavy weapon; +1 damage included in Mountain numbers.')
+        item.d = 'Campaign heavy weapon; +1 rolled damage when wielded with a heavy-weapon kit, such as Panther or Mountain.';
     }
     if (raw.guide) {
       const g = raw.guide;
@@ -220,20 +225,20 @@
         ranged: true,
       },
       melee: {
-        name: s.kit2 === "mountain" ? "Pain for Pain" : "Protective Attack",
+        name: s.kit2 === "panther" ? "Devastating Rush" : s.kit2 === "mountain" ? "Pain for Pain" : "Protective Attack",
         type: "main",
         cost: 0,
         range: "Adjacent",
         intent: "hurt",
         blurb:
-          s.kit2 === "mountain"
+          s.kit2 === "panther" ? "Move straight toward your target, then strike." : s.kit2 === "mountain"
             ? "Hit back harder at a foe who hurt you."
             : "Strike a foe and make ignoring you costly.",
         detail:
-          s.kit2 === "mountain"
+          s.kit2 === "panther" ? "Before the strike, you can move up to 3 squares straight toward the target. Add 1 damage per square moved this way. Includes Heelcutter’s +1. This movement is not shifting; check terrain and opportunity attacks." : s.kit2 === "mountain"
             ? "Includes Heelcutter. Add 2 damage if the target damaged you since the end of your last turn."
             : "The target is taunted by you until the end of its next turn.",
-        damage: s.kit2 === "mountain" ? [6, 8, 16] : [7, 10, 13],
+        damage: s.kit2 === "panther" ? [6,9,16] : s.kit2 === "mountain" ? [6, 8, 16] : [7, 10, 13],
         target: true,
       },
       mind: {
@@ -402,8 +407,11 @@
         );
     if (id === "patient" && o.hold && s.guide.used.move)
       throw Error("You already used your move action.");
+    const rush = id === 'melee' && s.kit2 === 'panther' ? (o.rush || 0) : 0;
+    if (!Number.isInteger(rush) || rush < 0 || rush > 3) throw Error('Choose 0–3 squares for Devastating Rush.');
+    if (rush && (s.conds.Grabbed || s.conds.Restrained || (s.conds.Slowed && rush > 2))) throw Error('Your condition prevents that much movement.');
     const bonus =
-        (id === "patient" && o.hold ? 2 : 0) +
+        rush + (id === "patient" && o.hold ? 2 : 0) +
         (id === "melee" && s.kit2 === "mountain" && o.hurt ? 2 : 0),
       damage =
         (id === "mind" && ranged ? [6, 8, 16] : a.damage)[tier - 1] +
@@ -732,10 +740,10 @@
     return {scope:'hero',label:'Your class · Tactician',detail:'A Tactician feature or ability selected for Aravinthaya.'};
   }
   function breakdown(s,id,ranged=false){
-    const mountain=s.kit2==='mountain';
+    const mountain=s.kit2==='mountain', panther=s.kit2==='panther', heavy=mountain||panther;
     if(id==='patient')return {base:[3,6,9],stat:[2,2,2],kit:[0,0,4],treasure:[0,0,0],kitName:'Sniper'};
-    if(id==='melee')return {base:mountain?[3,5,9]:[3,6,9],stat:[2,2,2],kit:mountain?[0,0,4]:[2,2,2],treasure:mountain?[1,1,1]:[0,0,0],kitName:KITS[s.kit2].name};
-    if(id==='mind')return {base:[4,6,10],stat:[2,2,2],kit:ranged?[0,0,4]:mountain?[0,0,4]:[2,2,2],treasure:!ranged&&mountain?[1,1,1]:[0,0,0],kitName:ranged?'Sniper':KITS[s.kit2].name};
+    if(id==='melee')return {base:mountain?[3,5,9]:[3,6,9],stat:[2,2,2],kit:heavy?[0,0,4]:[2,2,2],treasure:heavy?[1,1,1]:[0,0,0],kitName:KITS[s.kit2].name};
+    if(id==='mind')return {base:[4,6,10],stat:[2,2,2],kit:ranged?[0,0,4]:heavy?[0,0,4]:[2,2,2],treasure:!ranged&&heavy?[1,1,1]:[0,0,0],kitName:ranged?'Sniper':KITS[s.kit2].name};
     return null;
   }
   return {

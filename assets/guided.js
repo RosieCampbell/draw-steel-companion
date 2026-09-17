@@ -345,8 +345,8 @@
       " · Stability " +
       k.stability +
       " · Speed 6 · Disengage shift 2." +
-      (state.kit2 === "mountain"
-        ? " Mountain damage includes your campaign’s Heelcutter +1."
+      (["mountain","panther"].includes(state.kit2)
+        ? " Melee damage includes your campaign’s Heelcutter +1."
         : "");
     $("#kitSelect").value = state.kit2;
     $("#kitSelect").disabled = state.inCombat;
@@ -417,6 +417,7 @@
       d2: Number($("#die2")?.value),
       edges: Number($("#edges")?.value || 0),
       banes: Number($("#banes")?.value || 0),
+      rush: Number($('#rushSquares')?.value || 0),
       surges: Number($("#spendSurges")?.value || 0),
       markEffect: $("#markEffect")?.checked || false,
       adjacent: $("#adjacent")?.checked || false,
@@ -486,6 +487,7 @@
           '<label class="checkbox"><input id="hold" type="checkbox" ' +
           (state.guide.used.move ? "disabled" : "") +
           ">I will not use my move action this turn (+2 damage).</label>";
+      if (id === 'melee' && state.kit2 === 'panther') html += '<label for="rushSquares">Squares moved straight toward the target with this ability (+1 damage each)</label><select id="rushSquares"><option>0</option><option>1</option><option>2</option><option>3</option></select>';
       if (id === "melee" && state.kit2 === "mountain")
         html +=
           '<label class="checkbox"><input id="hurt" type="checkbox">This foe damaged me since the end of my last turn (+2 damage).</label>';
