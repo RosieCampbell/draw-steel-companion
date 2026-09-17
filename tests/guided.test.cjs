@@ -356,3 +356,16 @@ test('Panther uses its own stats and Devastating Rush, preserves action budget a
  assert.equal(D.validate(JSON.parse(JSON.stringify(s))).kit2,'panther');
  s.conds.Grabbed='save';assert.throws(()=>D.rollResult(s,'melee',{...options,rush:1}));
 });
+test('project points migrate to 195, preserve zero and edited balances through JSON restore',async t=>{
+ const old=D.fresh();delete old.projectPoints;
+ assert.equal(D.validate(old).projectPoints,195);
+ const zero=D.apply(D.fresh(),{type:'set',key:'projectPoints',value:0});assert.equal(D.validate(JSON.parse(JSON.stringify(zero))).projectPoints,0);
+ assert.throws(()=>D.apply(zero,{type:'set',key:'projectPoints',value:-1}));
+ const p=await page(t,{[LIVE]:JSON.stringify(old),'ds-guided-mode':'live'});
+ p.click('[data-view="hero"]');const field=p.q('[data-set="projectPoints"]');assert.equal(field.value,'195');
+ field.value='175';field.dispatchEvent(new p.w.Event('change',{bubbles:true}));assert.equal(p.state(LIVE).projectPoints,175);
+ const raw=JSON.stringify(p.state(LIVE));
+ const restored=await page(t,{'ds-guided-mode':'live'});
+ Object.defineProperty(restored.q('#restoreFile'),'files',{configurable:true,value:[{text:async()=>raw}]});await restored.q('#restoreFile').onchange();
+ assert.equal(restored.q('[data-set="projectPoints"]').value,'175');assert.equal(restored.state(LIVE).projectPoints,175);
+});

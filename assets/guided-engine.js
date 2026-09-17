@@ -55,6 +55,7 @@
       wealth: 1,
       renown: 1,
       xp: 0,
+      projectPoints: 195,
       conds: {},
       projects: [],
       items: [],
@@ -186,6 +187,7 @@
       "wealth",
       "renown",
       "xp",
+      "projectPoints",
       "round",
     ])
       s[key] = Math.max(0, s[key]);
@@ -698,7 +700,7 @@
         );
         break;
       case "set": {
-        const limits={stam:[-k.wind,k.max],temp:[0,1000000],focus:[0,1000000],surge:[0,1000000],rec:[0,10],tok:[0,1000000],vict:[0,1000000],wealth:[0,1000000],renown:[0,1000000],xp:[0,1000000]};
+        const limits={stam:[-k.wind,k.max],temp:[0,1000000],focus:[0,1000000],surge:[0,1000000],rec:[0,10],tok:[0,1000000],vict:[0,1000000],wealth:[0,1000000],renown:[0,1000000],xp:[0,1000000],projectPoints:[0,1000000]};
         const limit=limits[event.key];
         if(!limit||!Number.isSafeInteger(event.value)||event.value<limit[0]||event.value>limit[1])throw Error('Enter a whole number between '+(limit?limit.join(' and '):'the allowed limits')+'.');
         s[event.key]=event.value;log(s,'Set '+event.key+' to '+event.value+'.');break;

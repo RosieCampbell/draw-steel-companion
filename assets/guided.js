@@ -382,7 +382,7 @@
     learning?.refresh();
   }
   function renderCampaign() {
-    const names={wealth:'Wealth',renown:'Renown',xp:'Experience'};
+    const names={wealth:'Wealth',renown:'Renown',xp:'Experience',projectPoints:'Unspent project points'};
     $('#campaignFields').innerHTML=Object.entries(names).map(([key,label])=>'<label>'+label+'<input type="number" min="0" step="1" data-set="'+key+'" value="'+state[key]+'"></label>').join('');
     const schemas = {
       projects: {n: 'Project name', p: 'Progress', g: 'Goal'},
