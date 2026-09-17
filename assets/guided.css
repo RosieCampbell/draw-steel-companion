@@ -1141,3 +1141,8 @@ dialog .meta {
 
 .rail-recoveries { margin-top:18px; min-width:0; }
 @media(max-width:900px){.rail-recoveries { grid-column:1 / -1; max-width:260px; }}
+
+.project-prerequisites { margin-top:16px; }
+.project-prerequisites h5 { font-size:13px; margin:0 0 8px; }
+.project-prerequisites .checkbox { display:flex; align-items:flex-start; gap:8px; margin:8px 0; overflow-wrap:anywhere; }
+.project-prerequisites input[type="checkbox"] { width:18px; flex:0 0 18px; margin:2px 0 0; }

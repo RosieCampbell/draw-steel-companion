@@ -386,7 +386,7 @@
     const names={wealth:'Wealth',renown:'Renown',xp:'Experience',projectPoints:'Unspent project points'};
     $('#campaignFields').innerHTML=Object.entries(names).map(([key,label])=>'<label>'+label+'<input type="number" min="0" step="1" data-set="'+key+'" value="'+state[key]+'"></label>').join('');
     const schemas = {
-      projects: {n: 'Project name', p: 'Progress (manual correction)', g: 'Goal', status: 'Status', d: 'Notes, materials and requirements'},
+      projects: {n: 'Project name', p: 'Progress (manual correction)', g: 'Goal', status: 'Status', d: 'Project notes'},
       items: {n: 'Consumable name', c: 'Quantity', d: 'Description / effect'},
       gear: {n: 'Equipment name', d: 'Notes'}
     };
@@ -402,9 +402,11 @@
             : '<input data-field="' + field + '" type="' + (typeof row[field] === 'number' ? 'number' : 'text') + '" value="' + value.replaceAll('"', '&quot;') + '">';
           return '<label class="campaign-field field-' + field + '">' + label + control + '</label>';
         }).join('') +
+        (key==='projects'?'<label class="campaign-field field-d">Prerequisites (one per line)<textarea data-field="prerequisitesText" rows="4" placeholder="Project source or recipe&#10;Required materials&#10;Required skill, tool or location">'+escapeText((row.prerequisites||[]).map(r=>r.text).join('\n'))+'</textarea></label>':'') +
         '<div class="campaign-actions"><button data-list="' + key + '" data-operation="save">Save changes</button><button data-list="' + key + '" data-operation="cancel">Cancel</button></div>' :
         '<div class="campaign-summary"><h4>' + escapeText(row.n || 'Unnamed ' + singular[key]) + '</h4>' +
         (key === 'gear' ? '<p>' + escapeText(row.d || 'No notes.') + '</p>' : '<p>' + (key === 'projects' ? 'Progress: ' + row.p + ' / ' + row.g + ' · '+escapeText(row.status) : 'Quantity: ' + row.c) + '</p><p>'+escapeText(row.d || '')+'</p>') +
+        (key==='projects'?'<div class="project-prerequisites"><h5>Prerequisites</h5>'+((row.prerequisites||[]).length?(row.prerequisites||[]).map((r,i)=>'<label class="checkbox"><input type="checkbox" data-prerequisite="'+i+'" data-project="'+index+'" '+(r.met?'checked':'')+'>'+escapeText(r.text)+'</label>').join(''):'<p class="small muted">None recorded. Use Edit to add requirements.</p>')+'</div>':'')+
         '</div><div class="campaign-actions">'+(key==='projects'?'<button data-allocate="'+index+'">Spend project points</button>':'')+'<button data-list="' + key + '" data-operation="edit">Edit</button><button data-list="' + key + '" data-operation="remove">Remove</button></div>') + '</div>'
       ).join('') + '<button data-list="' + key + '" data-operation="add">Add ' + singular[key] + '</button></section>'
     ).join('');
@@ -798,7 +800,7 @@
     if (b.dataset.quickDamage || b.dataset.quickHeal) { commit({type:'health',kind:b.dataset.quickDamage?'damage':'heal',amount:Number(b.dataset.quickDamage||b.dataset.quickHeal)});return; }
     if (b.dataset.allocate !== undefined) {
       const index=Number(b.dataset.allocate), project=state.projects[index];
-      utility('Spend project points',detail('Allocate points to '+project.n+'. This subtracts from your unspent balance and adds to this project’s progress together. Confirm any project requirements with your Director. You have '+state.projectPoints+' points available.')+'<label for="allocateAmount">Points to spend</label><input id="allocateAmount" type="number" min="1" value="1"><button id="confirmAllocation" class="primary-button">Allocate points</button>');
+      utility('Spend project points',detail(((project.prerequisites||[]).some(r=>!r.met)?'Some prerequisites are still marked unmet. Confirm eligibility with your Director before spending. ':'')+'Allocate points to '+project.n+'. This subtracts from your unspent balance and adds to this project’s progress together. Confirm any project requirements with your Director. You have '+state.projectPoints+' points available.')+'<label for="allocateAmount">Points to spend</label><input id="allocateAmount" type="number" min="1" value="1"><button id="confirmAllocation" class="primary-button">Allocate points</button>');
       $('#confirmAllocation').onclick=()=>{if(commit({type:'allocateProject',index,amount:Number($('#allocateAmount').value)}))$('#utilityDialog').close();};return;
     }
     if (b.dataset.list) {
@@ -875,6 +877,8 @@
     }
   });
   document.addEventListener('change',e=>{
+    if(e.target.dataset.prerequisite !== undefined){if(!commit({type:'prerequisite',index:Number(e.target.dataset.project),requirement:Number(e.target.dataset.prerequisite),met:e.target.checked}))renderCampaign();return;}
+
     const key=e.target.dataset.set||({stamina:'stam',focus:'focus',surges:'surge'}[e.target.id]);
     if(key){if(!commit({type:'set',key,value:e.target.value.trim()===''?NaN:Number(e.target.value)}))render();}
   });

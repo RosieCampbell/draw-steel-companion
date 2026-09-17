@@ -143,6 +143,8 @@
           if(typeof row.d!=='string'||row.d.length>20000)throw Error('Invalid item notes.');
         }
         if(key === 'projects') {
+          if(row.prerequisites === undefined)row.prerequisites=[];
+          if(!Array.isArray(row.prerequisites)||row.prerequisites.length>100||row.prerequisites.some(r=>!r||typeof r.text!=='string'||r.text.length>500||typeof r.met!=='boolean'))throw Error('Invalid project prerequisites.');
           if(row.status === undefined)row.status=row.g>0&&row.p>=row.g?'completed':'active';
           if(!['planned','active','completed'].includes(row.status))throw Error('Invalid project status.');
         }
@@ -719,6 +721,11 @@
         if(!limit||!Number.isSafeInteger(event.value)||event.value<limit[0]||event.value>limit[1])throw Error('Enter a whole number between '+(limit?limit.join(' and '):'the allowed limits')+'.');
         s[event.key]=event.value;log(s,'Set '+event.key+' to '+event.value+'.');break;
       }
+      case 'prerequisite': {
+        const project=s.projects[event.index], item=project?.prerequisites?.[event.requirement];
+        if(!Number.isInteger(event.index)||!Number.isInteger(event.requirement)||!item||typeof event.met!=='boolean')throw Error('Invalid prerequisite.');
+        item.met=event.met;log(s,(event.met?'Met':'Unmet')+' prerequisite: '+item.text);break;
+      }
       case 'allocateProject': {
         const project=s.projects[event.index], amount=event.amount;
         if(!Number.isInteger(event.index)||!project||!Number.isSafeInteger(amount)||amount<=0||amount>s.projectPoints)throw Error('Enter an amount within your unspent project points.');
@@ -732,7 +739,12 @@
         if(event.operation==='add'){if(s[event.key].length>=500)throw Error('List is full.');s[event.key].push(Object.fromEntries(Object.entries(schema).map(([k,type])=>[k,k==='status'?'planned':type==='text'?'':0])));}
         else {if(!Number.isInteger(event.index)||!s[event.key][event.index])throw Error('Unknown row.');
           if(event.operation==='remove')s[event.key].splice(event.index,1);
-          else if(event.operation==='save'){const row={};for(const [key,type] of Object.entries(schema)){const value=event.row[key] ?? (key==='d'?'':key==='status'?'active':undefined);if(key==='status'&&!['planned','active','completed'].includes(value))throw Error('Invalid project status.');if(type==='text'&&(typeof value!=='string'||value.length>20000))throw Error('Invalid text.');if(type==='number'&&(!Number.isSafeInteger(value)||value<0||value>1000000))throw Error('Use a nonnegative whole number.');row[key]=value;}s[event.key][event.index]=row;}
+          else if(event.operation==='save'){const row={...s[event.key][event.index]};for(const [key,type] of Object.entries(schema)){const value=event.row[key] ?? (key==='d'?'':key==='status'?'active':undefined);if(key==='status'&&!['planned','active','completed'].includes(value))throw Error('Invalid project status.');if(type==='text'&&(typeof value!=='string'||value.length>20000))throw Error('Invalid text.');if(type==='number'&&(!Number.isSafeInteger(value)||value<0||value>1000000))throw Error('Use a nonnegative whole number.');row[key]=value;}if(event.key==='projects' && event.row.prerequisitesText !== undefined){
+            const text=event.row.prerequisitesText;if(typeof text!=='string')throw Error('Invalid prerequisites.');
+            const entries=[...new Set(text.split('\n').map(t=>t.trim()).filter(Boolean))];
+            if(entries.length>100||entries.some(t=>t.length>500))throw Error('Use up to 100 prerequisites, each at most 500 characters.');
+            row.prerequisites=entries.map(text=>({text,met:(row.prerequisites||[]).find(r=>r.text===text)?.met||false}));
+          }s[event.key][event.index]=row;}
           else throw Error('Unknown list operation.');
         }
         log(s,'Updated '+event.key+'.');break;
