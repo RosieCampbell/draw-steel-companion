@@ -423,7 +423,18 @@ test('"Show all" lists every ability card except the creative prompt', async (t)
   p.click("#beginTurn");
   p.click("#resetIntent");
   const names = [...p.d.querySelectorAll("#actionCards h3")].map((h) => h.textContent);
-  for (const n of ["Mark a foe","Patient Shot","Mind Game","Strike Now!","Squad! Forward!","Move","Disengage","Catch Breath","Defend"])
+  for (const n of ["Mark a foe","Patient Shot","Free Strike","Mind Game","Strike Now!","Squad! Forward!","Move","Disengage","Catch Breath","Defend"])
     assert.ok(names.includes(n), n + " missing from Show all");
   assert.ok(!names.includes("Try something else"));
+});
+
+test("Free Strike resolves melee by kit and bow at 4/6/12 with the adjacent bane", () => {
+  let s = D.apply(D.apply(D.fresh(), { type: "start" }), { type: "turn" });
+  assert.deepEqual(D.abilities(s).freestrike.damage, [6, 9, 11]);
+  const roll = { d1: 5, d2: 5, edges: 0, banes: 0, surges: 0, target: "Goblin", confirm: true, markEffect: false };
+  assert.equal(D.rollResult(s, "freestrike", roll).damage, 9);
+  assert.equal(D.rollResult(s, "freestrike", { ...roll, ranged: true }).damage, 6);
+  assert.equal(D.rollResult(s, "freestrike", { ...roll, ranged: true, adjacent: true }).damage, 4);
+  let p = D.apply(D.fresh(), { type: "kit", kit: "panther" });
+  assert.deepEqual(D.abilities(p).freestrike.damage, [5, 8, 14]);
 });

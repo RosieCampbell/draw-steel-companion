@@ -259,6 +259,18 @@
         damage: s.kit2 === "panther" ? [6,9,16] : s.kit2 === "mountain" ? [6, 8, 16] : [7, 10, 13],
         target: true,
       },
+      freestrike: {
+        name: "Free Strike",
+        type: "main",
+        cost: 0,
+        range: "Adjacent or 15 squares",
+        intent: "hurt",
+        blurb: "A basic attack. Opportunity attacks, Overwatch and Charge use it too.",
+        detail:
+          "Melee damage " + k.free.join(" / ") + " with " + k.name + "; bow 4 / 6 / 12 at range 15. These include Might and your kits. When something grants you a free strike outside your turn, it costs no action — just make the roll. On your own turn your signature abilities usually hit harder.",
+        damage: k.free,
+        target: true,
+      },
       mind: {
         name: "Mind Game",
         type: "main",
@@ -394,7 +406,9 @@
       throw Error("You do not have that many surges (maximum 3).");
     if (!o.target || !o.target.trim() || !o.confirm)
       throw Error("Confirm a valid target in range and line of effect.");
-    const ranged = id === "patient" || (id === "mind" && o.ranged),
+    const ranged =
+        id === "patient" ||
+        ((id === "mind" || id === "freestrike") && o.ranged),
       marked =
         id === "mind" ||
         (s.mark && s.mark.toLowerCase() === o.target.trim().toLowerCase());
@@ -432,7 +446,11 @@
         rush + (id === "patient" && o.hold ? 2 : 0) +
         (id === "melee" && s.kit2 === "mountain" && o.hurt ? 2 : 0),
       damage =
-        (id === "mind" && ranged ? [6, 8, 16] : a.damage)[tier - 1] +
+        (id === "mind" && ranged
+          ? [6, 8, 16]
+          : id === "freestrike" && ranged
+            ? [4, 6, 12]
+            : a.damage)[tier - 1] +
         bonus +
         o.surges * 2;
     let rider =
@@ -769,7 +787,7 @@
     return normalize(s);
   }
   function origin(id,s){
-    if(['advance','disengage','recover','defend','creative'].includes(id))return {scope:'everyone',label:'Everyone',detail:'A general action. Your stats and kit may change its numbers.'};
+    if(['advance','disengage','recover','defend','creative','freestrike'].includes(id))return {scope:'everyone',label:'Everyone',detail:'A general action. Your stats and kit may change its numbers.'};
     if(id==='patient')return {scope:'hero',label:'Your kit · Sniper',detail:'A signature ability from Sniper. It is not a basic action every hero gets.'};
     if(id==='melee')return {scope:'hero',label:'Your kit · '+KITS[s.kit2].name,detail:'A signature ability from your selected melee kit.'};
     return {scope:'hero',label:'Your class · Tactician',detail:'A Tactician feature or ability selected for Aravinthaya.'};
@@ -779,6 +797,7 @@
     if(id==='patient')return {base:[3,6,9],stat:[2,2,2],kit:[0,0,4],treasure:[0,0,0],kitName:'Sniper'};
     if(id==='melee')return {base:mountain?[3,5,9]:[3,6,9],stat:[2,2,2],kit:heavy?[0,0,4]:[2,2,2],treasure:heavy?[1,1,1]:[0,0,0],kitName:KITS[s.kit2].name};
     if(id==='mind')return {base:[4,6,10],stat:[2,2,2],kit:ranged?[0,0,4]:heavy?[0,0,4]:[2,2,2],treasure:!ranged&&heavy?[1,1,1]:[0,0,0],kitName:ranged?'Sniper':KITS[s.kit2].name};
+    if(id==='freestrike')return ranged?{base:[2,4,6],stat:[2,2,2],kit:[0,0,4],treasure:[0,0,0],kitName:'Sniper'}:{base:[2,5,7],stat:[2,2,2],kit:heavy?[0,0,4]:[2,2,2],treasure:heavy?[1,1,1]:[0,0,0],kitName:KITS[s.kit2].name};
     return null;
   }
   return {

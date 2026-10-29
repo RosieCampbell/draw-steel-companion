@@ -517,7 +517,7 @@
         ) +
         '" placeholder="A name you’ll recognize"><label class="checkbox"><input id="targetConfirmed" type="checkbox">I confirm the target is allowed, in range and within line of effect.</label>';
     if (a.damage) {
-      if (id === "mind")
+      if (id === "mind" || id === "freestrike")
         html +=
           '<label for="attackRange">Weapon</label><select id="attackRange"><option value="melee">Melee · adjacent</option><option value="ranged">Bow · within 15 squares</option></select>';
       html +=
@@ -526,7 +526,7 @@
           ? "Mind Game applies Mark before the roll."
           : "An edge is included if this is your Mark.") +
         "</label>";
-      if (id === "patient" || id === "mind")
+      if (id === "patient" || id === "mind" || id === "freestrike")
         html +=
           '<label class="checkbox"><input id="adjacent" type="checkbox">An enemy is adjacent to me (bane on a ranged strike).</label>';
       if (id === "patient")
