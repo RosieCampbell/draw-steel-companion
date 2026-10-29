@@ -400,3 +400,19 @@ test('project prerequisites can be checked, edited and restored without losing c
  assert.equal(p.state().projects[0].prerequisites[0].met,true);
  const restored=D.validate(p.state());assert.deepEqual(restored.projects[0].prerequisites,[{text:'Recipe',met:true},{text:'Herbs',met:false}]);
 });
+
+test("disabled buttons explain why", async (t) => {
+  const p = await page(t);
+  // Fresh hero at rest: full Stamina blocks Recovery, with the reason on the button
+  assert.equal(p.q("#recover").disabled, true);
+  assert.match(p.q("#recover .why").textContent, /Stamina is already full/);
+  // In combat: rest-phase buttons name the encounter as the blocker
+  p.click("#start");
+  assert.match(p.q("#recover .why").textContent, /end the encounter first/);
+  assert.match(p.q("#respite .why").textContent, /end the encounter first/);
+  assert.equal(p.q("#beginTurn").disabled, false);
+  assert.equal(p.q("#beginTurn .why"), null);
+  // Take the turn: begin-turn explains it was already taken
+  p.click("#watchBeginTurn");
+  assert.match(p.q("#beginTurn .why").textContent, /already took your turn/);
+});

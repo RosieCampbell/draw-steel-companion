@@ -1146,3 +1146,10 @@ dialog .meta {
 .project-prerequisites h5 { font-size:13px; margin:0 0 8px; }
 .project-prerequisites .checkbox { display:flex; align-items:flex-start; gap:8px; margin:8px 0; overflow-wrap:anywhere; }
 .project-prerequisites input[type="checkbox"] { width:18px; flex:0 0 18px; margin:2px 0 0; }
+
+button .why {
+  font-weight: 400;
+  font-style: italic;
+  font-size: 0.85em;
+  opacity: 0.85;
+}

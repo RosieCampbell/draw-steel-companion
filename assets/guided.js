@@ -5,6 +5,22 @@
     $$ = (s) => [...document.querySelectorAll(s)];
   const LIVE = "ds-aravinthaya-sheet-v1",
     PRACTICE = "ds-guided-practice-v1";
+  function explainDisabled(el, reason) {
+    el.disabled = !!reason;
+    let why = el.querySelector(".why");
+    if (reason) {
+      if (!why) {
+        why = document.createElement("span");
+        why.className = "why";
+        el.appendChild(why);
+      }
+      why.textContent = " — " + reason;
+      el.title = reason;
+    } else {
+      if (why) why.remove();
+      el.removeAttribute("title");
+    }
+  }
   let mode = "practice",
     state = D.fresh(),
     history = [],
@@ -182,7 +198,16 @@
     $("#surges").value = state.surge;
     $('#railRecoveries').value = state.rec;
     $('#railRecoveryValue').textContent = 'Each restores '+k.heal+' Stamina · maximum 10';
-    $('#grantedRecovery').disabled = state.rec < 1 || state.stam >= k.max || state.stam <= -k.wind;
+    explainDisabled(
+      $('#grantedRecovery'),
+      state.rec < 1
+        ? "no Recoveries left"
+        : state.stam >= k.max
+          ? "Stamina is already full"
+          : state.stam <= -k.wind
+            ? "your hero is dead"
+            : "",
+    );
     $("#markName").textContent = state.mark || "No one yet";
     $("#conditionsList").replaceChildren();
     let conditions = Object.keys(state.conds);
@@ -244,18 +269,37 @@
     $("#victories").textContent = state.vict;
     $("#recoveries").textContent = state.rec;
     $("#recoveryValue").textContent = k.heal;
-    $("#start").disabled = state.inCombat;
-    $("#recover").disabled =
-      state.inCombat ||
-      state.rec < 1 ||
-      state.stam >= k.max ||
-      state.stam <= -k.wind;
+    explainDisabled($("#start"), state.inCombat ? "already in an encounter" : "");
     $("#recover").textContent = "Spend a Recovery · +" + k.heal;
-    $("#victory").disabled = state.inCombat;
-    $("#respite").disabled = state.inCombat || state.stam <= -k.wind;
+    explainDisabled(
+      $("#recover"),
+      state.inCombat
+        ? "end the encounter first"
+        : state.rec < 1
+          ? "no Recoveries left — complete a respite"
+          : state.stam >= k.max
+            ? "Stamina is already full"
+            : state.stam <= -k.wind
+              ? "your hero is dead"
+              : "",
+    );
+    explainDisabled($("#victory"), state.inCombat ? "end the encounter first" : "");
+    explainDisabled(
+      $("#respite"),
+      state.inCombat
+        ? "end the encounter first"
+        : state.stam <= -k.wind
+          ? "your hero is dead"
+          : "",
+    );
     $("#turnStartCard").hidden = state.inCombat && g.phase === "turn";
-    $("#beginTurn").disabled = !state.inCombat || state.turnTaken;
-    $("#watchBeginTurn").disabled = !state.inCombat || state.turnTaken;
+    const turnReason = !state.inCombat
+      ? "begin an encounter first"
+      : state.turnTaken
+        ? "you already took your turn this round"
+        : "";
+    explainDisabled($("#beginTurn"), turnReason);
+    explainDisabled($("#watchBeginTurn"), turnReason);
     $("#nextRound").disabled = !state.inCombat;
     $("#endCombat").disabled = !state.inCombat;
     $("#endTurn").disabled = !state.inCombat || g.phase !== "turn";
