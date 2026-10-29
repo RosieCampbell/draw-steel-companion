@@ -318,7 +318,7 @@
     const abilities = D.abilities(state),
       ids =
         intent === "all"
-          ? ["mark", "patient", "melee", "strike"]
+          ? Object.keys(abilities).filter((id) => id !== "creative")
           : Object.keys(abilities).filter(
               (id) => abilities[id].intent === intent && id !== "creative",
             );

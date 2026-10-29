@@ -416,3 +416,14 @@ test("disabled buttons explain why", async (t) => {
   p.click("#watchBeginTurn");
   assert.match(p.q("#beginTurn .why").textContent, /already took your turn/);
 });
+
+test('"Show all" lists every ability card except the creative prompt', async (t) => {
+  const p = await page(t);
+  p.click("#start");
+  p.click("#beginTurn");
+  p.click("#resetIntent");
+  const names = [...p.d.querySelectorAll("#actionCards h3")].map((h) => h.textContent);
+  for (const n of ["Mark a foe","Patient Shot","Mind Game","Strike Now!","Squad! Forward!","Move","Disengage","Catch Breath","Defend"])
+    assert.ok(names.includes(n), n + " missing from Show all");
+  assert.ok(!names.includes("Try something else"));
+});
